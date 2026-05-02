@@ -176,16 +176,16 @@ const Hero = () => (
   <section className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6">
     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
       <div className="text-left z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-cyan-300 text-sm font-medium mb-8 fade-up">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-cyan-300 text-sm font-medium mb-8 fade-up scan-target">
           <Sparkles className="w-4 h-4 text-cyan-400" />
           Core Engine 2.1 — Посимвольная генерация
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 mb-6 tracking-tight leading-[1.1] fade-up" style={{ animationDelay: '0.1s' }}>
+        <h1 className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 mb-6 tracking-tight leading-[1.1] fade-up scan-target" style={{ animationDelay: '0.1s' }}>
           Искусство Кода <br /> и Слова
         </h1>
         
-        <p className="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-xl fade-up" style={{ animationDelay: '0.2s' }}>
+        <p className="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-xl fade-up scan-target" style={{ animationDelay: '0.2s' }}>
           Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы с математической точностью. Работает на CUDA, MPS и CPU.
         </p>
         
@@ -234,7 +234,7 @@ const Features = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f, i) => (
-            <GlassCard key={i} className="p-8 group" delay={`${i * 0.1}s`}>
+            <GlassCard key={i} className="p-8 group scan-target" delay={`${i * 0.1}s`}>
               <div className={`w-14 h-14 rounded-2xl ${f.bg} ${f.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-white/5`}>
                 {React.cloneElement(f.icon, { className: "w-7 h-7" })}
               </div>
@@ -258,7 +258,7 @@ const Audit = () => (
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <div className="scan-target">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 text-sm font-semibold mb-6 border border-purple-500/30">
               <Activity className="w-4 h-4" />
               Heuristic Syntax Engine
@@ -282,7 +282,7 @@ const Audit = () => (
               { status: "🟡", title: "Базовое понимание", desc: "Простые конструкции, возможны мелкие ошибки.", border: "border-yellow-500/30", bg: "bg-yellow-500/5" },
               { status: "🔴", title: "Низкая точность", desc: "«Словесный салат», требуется дообучение.", border: "border-red-500/30", bg: "bg-red-500/5" }
             ].map((item, i) => (
-              <div key={i} className={`p-5 rounded-2xl border ${item.border} ${item.bg} backdrop-blur-sm flex gap-4 items-start hover:scale-[1.02] transition-transform`}>
+              <div key={i} className={`p-5 rounded-2xl border ${item.border} ${item.bg} backdrop-blur-sm flex gap-4 items-start hover:scale-[1.02] transition-transform scan-target`}>
                 <div className="text-2xl mt-1">{item.status}</div>
                 <div>
                   <h4 className="text-white font-bold mb-1">{item.title}</h4>
@@ -317,6 +317,50 @@ const Footer = () => (
 );
 
 export default function App() {
+  useEffect(() => {
+    // --- AI Scanner Effect ---
+    class AIScannerEffect {
+      constructor() {
+        this.targets = [];
+        this.beam = null;
+        this.init();
+      }
+
+      init() {
+        if (document.getElementById('ai-scanner-wrapper')) return;
+        const wrapper = document.createElement('div');
+        wrapper.id = 'ai-scanner-wrapper';
+        wrapper.innerHTML = '<div class="ai-scanner-beam" id="ai-scanner-beam"></div>';
+        document.body.appendChild(wrapper);
+
+        this.beam = document.getElementById('ai-scanner-beam');
+        this.targets = document.querySelectorAll('.scan-target');
+        this.monitorIntersections();
+      }
+
+      monitorIntersections() {
+        const checkPos = () => {
+          if (!this.beam) return;
+          const beamRect = this.beam.getBoundingClientRect();
+          const scanLineY = beamRect.bottom;
+
+          this.targets.forEach(target => {
+            const rect = target.getBoundingClientRect();
+            if (scanLineY >= rect.top && scanLineY <= (rect.bottom + 30)) {
+              target.classList.add('scan-distortion');
+            } else {
+              target.classList.remove('scan-distortion');
+            }
+          });
+          requestAnimationFrame(checkPos);
+        };
+        requestAnimationFrame(checkPos);
+      }
+    }
+
+    new AIScannerEffect();
+  }, []);
+
   return (
     <div className="min-h-screen font-sans selection:bg-cyan-500/30 selection:text-cyan-50 relative">
       <InjectStyles />

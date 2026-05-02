@@ -150,4 +150,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
     animate();
+
+    // --- AI Scanner Effect ---
+    class AIScannerEffect {
+        constructor() {
+            this.targets = [];
+            this.beam = null;
+            this.init();
+        }
+
+        init() {
+            const wrapper = document.createElement('div');
+            wrapper.id = 'ai-scanner-wrapper';
+            wrapper.innerHTML = '<div class="ai-scanner-beam" id="ai-scanner-beam"></div>';
+            document.body.appendChild(wrapper);
+
+            this.beam = document.getElementById('ai-scanner-beam');
+            this.targets = document.querySelectorAll('.scan-target');
+            this.monitorIntersections();
+        }
+
+        monitorIntersections() {
+            const checkPos = () => {
+                const beamRect = this.beam.getBoundingClientRect();
+                const scanLineY = beamRect.bottom;
+
+                this.targets.forEach(target => {
+                    const rect = target.getBoundingClientRect();
+                    if (scanLineY >= rect.top && scanLineY <= (rect.bottom + 30)) {
+                        target.classList.add('scan-distortion');
+                    } else {
+                        target.classList.remove('scan-distortion');
+                    }
+                });
+                requestAnimationFrame(checkPos);
+            };
+            requestAnimationFrame(checkPos);
+        }
+    }
+
+    new AIScannerEffect();
 });
