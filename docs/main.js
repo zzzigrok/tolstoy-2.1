@@ -57,6 +57,18 @@ window.addEventListener('resize', initCanvas);
 initCanvas();
 animate();
 
+// --- Mermaid Init ---
+mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    themeVariables: {
+        fontFamily: 'Inter',
+        primaryColor: '#00e5ff',
+        lineColor: '#00e5ff'
+    }
+});
+
 // --- SPA Router & View Management ---
 const landingView = document.getElementById('landing-view');
 const docsView = document.getElementById('docs-view');
@@ -102,8 +114,13 @@ async function loadDoc(fileName) {
         // Use marked to render markdown
         docsContent.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
         
+        // Render Mermaid Diagrams
+        await mermaid.run({
+            nodes: document.querySelectorAll('.language-mermaid')
+        });
+
         // Highlight code blocks
-        document.querySelectorAll('pre code').forEach((block) => {
+        document.querySelectorAll('pre code:not(.language-mermaid)').forEach((block) => {
             hljs.highlightElement(block);
         });
 
