@@ -3,31 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tolstoy AI v2.1 | Premium Landing</title>
+    <title>Tolstoy AI v2.1 | Premium Intelligent Studio</title>
     <meta name="description" content="Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы. Оптимизирован для CUDA, MPS и CPU.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="selection-cyan">
+<body>
 
-    <!-- Background Glows -->
-    <div class="bg-glow-cyan"></div>
-    <div class="bg-glow-purple"></div>
+    <!-- Background Orbs -->
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
 
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <i data-lucide="brain" class="logo-cyan"></i>
-                <span>TOLSTOY<span class="logo-cyan">AI</span></span>
-                <span class="version-badge">v2.1</span>
+                <div class="logo-icon-wrapper">
+                    <i data-lucide="book-open" class="cyan-text"></i>
+                </div>
+                <div class="nav-title">
+                    TOLSTOY<span class="cyan-text">AI</span>
+                    <span class="version-badge">v2.1</span>
+                </div>
             </div>
+            
             <div class="nav-links">
-                <a href="#features" class="nav-link">Архитектура</a>
-                <a href="#audit" class="nav-link">Лингво-аудит</a>
+                <a href="#architecture" class="nav-link">Архитектура</a>
+                <a href="#audit" class="nav-link">Аудит</a>
                 <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="github-btn">
-                    <i data-lucide="github" style="width: 1rem; height: 1rem;"></i>
+                    <i data-lucide="github"></i>
                     <span>GitHub</span>
                 </a>
             </div>
@@ -36,118 +51,188 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <div class="hero-badge animate-fade-in-up">
-                <i data-lucide="sparkles" style="width: 1rem; height: 1rem;"></i>
-                Tolstoy Core Engine 2.1 — Посимвольная генерация
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge fade-up">
+                    <i data-lucide="sparkles"></i>
+                    Core Engine 2.1 — Посимвольная генерация
+                </div>
+                
+                <h1 class="hero-title fade-up" style="animation-delay: 0.1s;">
+                    Искусство Кода <br> и Слова
+                </h1>
+                
+                <p class="hero-desc fade-up" style="animation-delay: 0.2s;">
+                    Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы с математической точностью. Работает на CUDA, MPS и CPU.
+                </p>
+                
+                <div class="hero-actions fade-up" style="animation-delay: 0.3s;">
+                    <a href="#architecture" class="btn btn-primary">
+                        <i data-lucide="brain"></i>
+                        Изучить архитектуру
+                    </a>
+                    <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="btn btn-secondary">
+                        <i data-lucide="github"></i>
+                        Репозиторий
+                    </a>
+                </div>
             </div>
-            
-            <h1 class="hero-title animate-fade-in-up" style="animation-delay: 100ms;">
-                Искусство Кода <br> и Слова
-            </h1>
-            
-            <p class="hero-desc animate-fade-in-up" style="animation-delay: 200ms;">
-                Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы с математической точностью. Оптимизирован для CUDA, MPS и CPU.
-            </p>
-            
-            <div class="hero-actions animate-fade-in-up" style="animation-delay: 300ms;">
-                <a href="#features" class="btn-primary">
-                    <i data-lucide="brain" style="width: 1.25rem; height: 1.25rem;"></i>
-                    Изучить архитектуру
-                </a>
-                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="btn-secondary">
-                    <i data-lucide="github" style="width: 1.25rem; height: 1.25rem;"></i>
-                    Проект на GitHub
-                </a>
+
+            <div class="hero-visual fade-up" style="animation-delay: 0.4s;">
+                <div class="hero-visual-glow"></div>
+                <div class="glass-card hero-card">
+                    <div class="hero-card-hover-bg"></div>
+                    <!-- Animated SVG Logo -->
+                    <svg viewBox="0 0 120 120" style="width: 100%; height: 100%; max-width: 320px; max-height: 320px; filter: drop-shadow(0 0 30px rgba(34,211,238,0.2));">
+                        <g class="logo-float">
+                            <!-- Нейронная сеть (Фон) -->
+                            <path d="M 60 75 L 85 60 L 100 80 L 80 100 Z" fill="none" stroke="#22d3ee" stroke-width="0.5" class="path-draw" opacity="0.5" />
+                            <path d="M 85 60 L 105 45 L 100 80" fill="none" stroke="#22d3ee" stroke-width="0.5" class="path-draw" opacity="0.5" style="animation-delay: 0.2s;" />
+                            <path d="M 60 75 L 75 95 L 80 100" fill="none" stroke="#22d3ee" stroke-width="0.5" class="path-draw" opacity="0.5" style="animation-delay: 0.4s;" />
+                            
+                            <!-- Узлы сети -->
+                            <circle cx="60" cy="75" fill="#22d3ee" class="node-pulse" style="animation-delay: 0s;" />
+                            <circle cx="85" cy="60" fill="#22d3ee" class="node-pulse" style="animation-delay: 0.4s;" />
+                            <circle cx="100" cy="80" fill="#22d3ee" class="node-pulse" style="animation-delay: 0.8s;" />
+                            <circle cx="80" cy="100" fill="#22d3ee" class="node-pulse" style="animation-delay: 1.2s;" />
+                            <circle cx="105" cy="45" fill="#22d3ee" class="node-pulse" style="animation-delay: 1.6s;" />
+                            <circle cx="75" cy="95" fill="#22d3ee" class="node-pulse" style="animation-delay: 2.0s;" />
+
+                            <!-- Главное Перо (Классика) -->
+                            <path 
+                                d="M 20 100 C 20 100, 35 75, 55 55 C 75 35, 95 15, 105 10 C 85 20, 60 40, 45 60 C 30 80, 20 100, 20 100 Z" 
+                                fill="rgba(255,255,255,0.05)" 
+                                stroke="#ffffff" 
+                                stroke-width="1.5"
+                                class="path-draw"
+                                style="backdrop-filter: blur(4px);"
+                            />
+                            <!-- Детали пера -->
+                            <path d="M 20 100 L 105 10" stroke="#ffffff" stroke-width="1" class="path-draw" opacity="0.4" />
+                            <path d="M 45 60 C 55 55, 65 40, 75 35" stroke="#ffffff" stroke-width="1" class="path-draw" opacity="0.6" style="animation-delay: 0.5s;" />
+                            <path d="M 60 45 C 70 40, 80 25, 90 20" stroke="#ffffff" stroke-width="1" class="path-draw" opacity="0.6" style="animation-delay: 0.7s;" />
+                            <path d="M 35 70 C 45 65, 55 50, 65 45" stroke="#ffffff" stroke-width="1" class="path-draw" opacity="0.6" style="animation-delay: 0.9s;" />
+                            
+                            <!-- Энергетическая связь между пером и сетью -->
+                            <path d="M 20 100 Q 40 110, 60 75" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4" class="path-draw" style="animation-delay: 1.5s;" />
+                        </g>
+                    </svg>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="section-header">
-            <h2 class="section-title">Архитектура Разума</h2>
-            <p class="section-desc">
-                Сочетание классических основ нейросетей и современных оптимизаций PyTorch.
-            </p>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="brain" style="color: var(--cyan-400);"></i>
-                </div>
-                <h3 class="feature-title">SimpleLLM Ядро</h3>
-                <p class="feature-desc">Компактный Transformer с Multi-Head Attention и Pre-LayerNorm. Работает даже на домашнем железе.</p>
+    <!-- Architecture Section -->
+    <section id="architecture" class="features">
+        <div class="features-container">
+            <div class="section-header fade-up">
+                <h2 class="section-title">Архитектура Разума</h2>
+                <p class="section-desc">
+                    Сочетание классических основ нейросетей и современных оптимизаций PyTorch, упакованное в элегантный стек.
+                </p>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="terminal" style="color: var(--purple-400);"></i>
+            <div class="features-grid">
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(34, 211, 238, 0.1); color: var(--cyan-400);">
+                        <i data-lucide="brain"></i>
+                    </div>
+                    <h3 class="feature-title">SimpleLLM Ядро</h3>
+                    <p class="feature-card-desc">Компактный Transformer с Multi-Head Attention и Pre-LayerNorm. Работает даже на домашнем железе.</p>
                 </div>
-                <h3 class="feature-title">Rich Terminal UI</h3>
-                <p class="feature-desc">Премиальный интерфейс управления через CLI с дашбордами, графиками и меню диагностики.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="activity" style="color: #4ade80;"></i>
+                
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0.1s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(168, 85, 247, 0.1); color: var(--purple-400);">
+                        <i data-lucide="terminal"></i>
+                    </div>
+                    <h3 class="feature-title">Rich Terminal UI</h3>
+                    <p class="feature-card-desc">Премиальный интерфейс управления через CLI с дашбордами, графиками и меню диагностики.</p>
                 </div>
-                <h3 class="feature-title">Лингво-Аудит</h3>
-                <p class="feature-desc">Встроенный эвристический движок для оценки синтаксиса, TTR и выявления мусорных конструкций.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="database" style="color: #60a5fa;"></i>
+                
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0.2s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(74, 222, 128, 0.1); color: #4ade80;">
+                        <i data-lucide="activity"></i>
+                    </div>
+                    <h3 class="feature-title">Лингво-Аудит</h3>
+                    <p class="feature-card-desc">Встроенный эвристический движок для оценки синтаксиса, TTR и выявления мусорных конструкций.</p>
                 </div>
-                <h3 class="feature-title">Чистые Данные</h3>
-                <p class="feature-desc">Автоматическая очистка корпусов текстов от артефактов парсинга и нестандартных символов.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="cpu" style="color: #fb923c;"></i>
+                
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0.3s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa;">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <h3 class="feature-title">Чистые Данные</h3>
+                    <p class="feature-card-desc">Автоматическая очистка корпусов текстов от артефактов парсинга и нестандартных символов.</p>
                 </div>
-                <h3 class="feature-title">Кроссплатформенность</h3>
-                <p class="feature-desc">Нативная поддержка аппаратного ускорения для NVIDIA (CUDA), Apple Silicon (MPS) и Intel (XPU).</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <i data-lucide="code-2" style="color: #f472b6;"></i>
+                
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0.4s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(251, 146, 60, 0.1); color: #fb923c;">
+                        <i data-lucide="cpu"></i>
+                    </div>
+                    <h3 class="feature-title">Аппаратное ускорение</h3>
+                    <p class="feature-card-desc">Нативная поддержка аппаратного ускорения для NVIDIA (CUDA), Apple Silicon (MPS) и Intel (XPU).</p>
                 </div>
-                <h3 class="feature-title">Character Based</h3>
-                <p class="feature-desc">Посимвольная токенизация улавливает уникальный авторский ритм и точную пунктуацию.</p>
+                
+                <div class="glass-card feature-card fade-up" style="animation-delay: 0.5s;">
+                    <div class="feature-icon-wrapper" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
+                        <i data-lucide="code-2"></i>
+                    </div>
+                    <h3 class="feature-title">Character Based</h3>
+                    <p class="feature-card-desc">Посимвольная токенизация улавливает уникальный авторский ритм и точную пунктуацию.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Audit Section -->
     <section id="audit" class="audit">
-        <div class="audit-icon-main">
-            <i data-lucide="activity" style="width: 2rem; height: 2rem;"></i>
-        </div>
-        <h2 class="section-title">Лингвистический Аудит</h2>
-        <p class="audit-desc">
-            Уникальный эвристический движок (<code>HeuristicSyntaxEngine</code>) анализирует сгенерированный текст, определяя части речи, фразеологизмы и сложность синтаксиса без внешних NLP-библиотек.
-        </p>
+        <div class="audit-container">
+            <div class="glass-card audit-glass fade-up">
+                <div class="audit-inner-glow"></div>
+                
+                <div class="audit-layout">
+                    <div>
+                        <div class="audit-badge">
+                            <i data-lucide="activity" style="width: 1rem; height: 1rem;"></i>
+                            Heuristic Syntax Engine
+                        </div>
+                        <h2 class="audit-title">
+                            Интеллектуальный <br>Лингво-Аудит
+                        </h2>
+                        <p class="audit-desc">
+                            Уникальный эвристический движок анализирует сгенерированный текст, определяя части речи, фразеологизмы и сложность синтаксиса без внешних NLP-библиотек.
+                        </p>
+                        
+                        <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="audit-link">
+                            Смотреть репозиторий проекта
+                            <i data-lucide="chevron-right" style="width: 1rem; height: 1rem;"></i>
+                        </a>
+                    </div>
 
-        <div class="audit-grid">
-            <div class="audit-card">
-                <div class="audit-status">🟢</div>
-                <h4 class="audit-card-title">Высокая связность</h4>
-                <p class="audit-card-desc">Модель строит сложные предложения, соблюдает пунктуацию и использует союзы.</p>
-            </div>
-            <div class="audit-card">
-                <div class="audit-status">🟡</div>
-                <h4 class="audit-card-title">Базовое понимание</h4>
-                <p class="audit-card-desc">Простые конструкции, возможны мелкие ошибки в запятых или редкие галлюцинации.</p>
-            </div>
-            <div class="audit-card">
-                <div class="audit-status">🔴</div>
-                <h4 class="audit-card-title">Низкая точность</h4>
-                <p class="audit-card-desc">"Словесный салат", модель не выучила структуру языка (требуется дообучение).</p>
+                    <div class="audit-status-list">
+                        <div class="audit-status-card status-green">
+                            <div class="status-icon">🟢</div>
+                            <div>
+                                <h4 class="status-title">Высокая связность</h4>
+                                <p class="status-desc">Сложные предложения, точная пунктуация и союзы.</p>
+                            </div>
+                        </div>
+                        <div class="audit-status-card status-yellow">
+                            <div class="status-icon">🟡</div>
+                            <div>
+                                <h4 class="status-title">Базовое понимание</h4>
+                                <p class="status-desc">Простые конструкции, возможны мелкие ошибки.</p>
+                            </div>
+                        </div>
+                        <div class="audit-status-card status-red">
+                            <div class="status-icon">🔴</div>
+                            <div>
+                                <h4 class="status-title">Низкая точность</h4>
+                                <p class="status-desc">«Словесный салат», требуется дообучение.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -156,14 +241,14 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-logo">
-                <i data-lucide="brain" style="width: 1.5rem; height: 1.5rem;"></i>
+                <i data-lucide="book-open" style="width: 1.5rem; height: 1.5rem; color: var(--slate-400);"></i>
                 <span>TOLSTOY AI</span>
             </div>
             <p class="footer-copy">
-                © 2026 Tolstoy AI Project. Распространяется под лицензией MIT.
+                © 2026 Tolstoy AI Project. MIT License.
             </p>
             <div class="footer-social">
-                <a href="https://github.com/zzzigrok/tolstoy-2.1" class="social-link">
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" class="social-link">
                     <i data-lucide="github"></i>
                 </a>
             </div>
