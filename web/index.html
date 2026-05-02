@@ -87,8 +87,13 @@
                     <h2 class="gradient-text">Генератор Смыслов</h2>
                     <p style="text-align: center; max-width: 600px;">Нажмите на кнопку, чтобы модель начала генерировать текст в реальном времени, имитируя стиль Льва Толстого.</p>
                     
+                    <div id="demo-input-container" style="width: 100%; margin-bottom: 1rem;">
+                        <input type="text" id="user-prompt" placeholder="Введите начало фразы..." 
+                               style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 12px; color: white; outline: none; font-family: 'Outfit';">
+                    </div>
+                    
                     <div id="generation-output">
-                        Нажмите кнопку для запуска...
+                        Введите текст выше и нажмите кнопку...
                     </div>
 
                     <button class="btn btn-primary" id="start-demo">

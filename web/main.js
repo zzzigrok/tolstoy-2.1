@@ -106,29 +106,57 @@ terminalObserver.observe(document.querySelector('.terminal'));
 // --- Interactive Generator Demo ---
 const startBtn = document.getElementById('start-demo');
 const output = document.getElementById('generation-output');
+const userInput = document.getElementById('user-prompt');
 
-const sampleText = "Все счастливые семьи похожи друг на друга, каждая несчастливая семья несчастлива по-своему. Все смешалось в доме Облонских. Жена узнала, что муж был в связи с бывшею в их доме француженкою-гувернанткой, и объявила мужу, что не может жить с ним в одном доме... Но в это мгновение он почувствовал, что жизнь его не кончена, что впереди еще много света и тени, и он улыбнулся своей мысли.";
+const sampleTextFallback = "Все счастливые семьи похожи друг на друга, каждая несчастливая семья несчастлива по-своему. Все смешалось в доме Облонских. Жена узнала, что муж был в связи с бывшею в их доме француженкою-гувернанткой, и объявила мужу, что не может жить с ним в одном доме... Но в это мгновение он почувствовал, что жизнь его не кончена, что впереди еще много света и тени, и он улыбнулся своей мысли.";
 
 let isGenerating = false;
 
-startBtn.addEventListener('click', () => {
+async function typeEffect(text) {
+    let i = 0;
+    return new Promise(resolve => {
+        let timer = setInterval(() => {
+            output.textContent += text[i];
+            i++;
+            if (i >= text.length) {
+                clearInterval(timer);
+                resolve();
+            }
+        }, 40);
+    });
+}
+
+startBtn.addEventListener('click', async () => {
     if (isGenerating) return;
     isGenerating = true;
+    
+    const prompt = userInput.value || "Все счастливые семьи";
     output.textContent = "";
     startBtn.disabled = true;
     startBtn.style.opacity = "0.5";
 
-    let i = 0;
-    let timer = setInterval(() => {
-        output.textContent += sampleText[i];
-        i++;
-        if (i >= sampleText.length) {
-            clearInterval(timer);
-            isGenerating = false;
-            startBtn.disabled = false;
-            startBtn.style.opacity = "1";
+    try {
+        // Пробуем подключиться к локальному серверу
+        const response = await fetch('http://localhost:5000/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt, max_tokens: 150 })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            await typeEffect(data.response);
+        } else {
+            throw new Error('Server unreachable');
         }
-    }, 40);
+    } catch (err) {
+        console.warn("Local API not running, using fallback simulation...");
+        await typeEffect(sampleTextFallback);
+    } finally {
+        isGenerating = false;
+        startBtn.disabled = false;
+        startBtn.style.opacity = "1";
+    }
 });
 
 // --- Scroll Reveal Animation ---
