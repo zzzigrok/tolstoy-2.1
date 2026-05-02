@@ -145,31 +145,41 @@ async function loadDoc(fileName) {
         // Use marked to render markdown
         docsContent.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
         
-        // Ensure all headings have IDs for anchor links
+        // Ensure all headings have IDs for anchor links (UTF-8 safe)
         docsContent.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
             if (!heading.id) {
-                let id = heading.textContent.toLowerCase().replace(/[^\wа-яё]+/gi, '-').replace(/(^-|-$)/g, '');
+                // \p{L} matches any letter in any language. \p{N} matches numbers.
+                let id = heading.textContent.toLowerCase().replace(/[^\p{L}\p{N}_]+/gu, '-').replace(/(^-|-$)/g, '');
                 heading.id = id;
             }
         });
 
         // Transform Mermaid blocks from marked output
-        document.querySelectorAll('pre code.language-mermaid').forEach(block => {
+        const mermaidNodes = [];
+        docsContent.querySelectorAll('pre code.language-mermaid').forEach(block => {
             const pre = block.parentElement;
             const mermaidDiv = document.createElement('div');
             mermaidDiv.className = 'mermaid';
             mermaidDiv.textContent = block.textContent;
             pre.replaceWith(mermaidDiv);
+            mermaidNodes.push(mermaidDiv);
         });
 
-        // Render Mermaid Diagrams
-        await mermaid.run({
-            nodes: document.querySelectorAll('.mermaid')
-        });
+        // Render Mermaid Diagrams if any exist
+        if (mermaidNodes.length > 0) {
+            try {
+                await mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
 
-        // Highlight code blocks
-        document.querySelectorAll('pre code:not(.language-mermaid)').forEach((block) => {
-            hljs.highlightElement(block);
+        // Highlight code blocks (safely ignoring mermaid which is now removed)
+        docsContent.querySelectorAll('pre code').forEach((block) => {
+            // Check again just in case a stray mermaid block exists
+            if (!block.classList.contains('language-mermaid') && !block.classList.contains('mermaid')) {
+                hljs.highlightElement(block);
+            }
         });
 
         window.scrollTo(0,0);
