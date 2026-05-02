@@ -1,9 +1,7 @@
-// Canvas Particles Background
+// --- Canvas Background ---
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
-
 let particles = [];
-const particleCount = 60;
 
 function initCanvas() {
     canvas.width = window.innerWidth;
@@ -14,24 +12,18 @@ class Particle {
     constructor() {
         this.reset();
     }
-
     reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
         this.size = Math.random() * 2 + 1;
     }
-
     update() {
         this.x += this.vx;
         this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-            this.reset();
-        }
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
     }
-
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -40,36 +32,24 @@ class Particle {
     }
 }
 
-for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
-}
+for (let i = 0; i < 60; i++) particles.push(new Particle());
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw lines
-    particles.forEach((p1, i) => {
+    particles.forEach((p, i) => {
+        p.update();
+        p.draw();
         particles.slice(i + 1).forEach(p2 => {
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
             if (dist < 150) {
                 ctx.beginPath();
-                ctx.strokeStyle = `rgba(0, 229, 255, ${0.2 * (1 - dist / 150)})`;
-                ctx.lineWidth = 0.5;
-                ctx.moveTo(p1.x, p1.y);
+                ctx.strokeStyle = `rgba(0, 229, 255, ${0.15 * (1 - dist / 150)})`;
+                ctx.moveTo(p.x, p.y);
                 ctx.lineTo(p2.x, p2.y);
                 ctx.stroke();
             }
         });
     });
-
-    particles.forEach(p => {
-        p.update();
-        p.draw();
-    });
-
     requestAnimationFrame(animate);
 }
 
@@ -77,56 +57,96 @@ window.addEventListener('resize', initCanvas);
 initCanvas();
 animate();
 
-// Scroll Reveal
-const revealElements = document.querySelectorAll('[data-reveal]');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
+// --- SPA Router & View Management ---
+const landingView = document.getElementById('landing-view');
+const docsView = document.getElementById('docs-view');
+const docsContent = document.getElementById('docs-content');
+
+function showView(viewName) {
+    if (viewName === 'docs') {
+        landingView.classList.add('hidden');
+        docsView.classList.remove('hidden');
+        window.scrollTo(0,0);
+        // Load default doc if none selected
+        if (!docsContent.innerHTML.trim()) loadDoc('README.md');
+    } else {
+        landingView.classList.remove('hidden');
+        docsView.classList.add('hidden');
+    }
+}
+
+// Event Listeners for Nav
+document.querySelectorAll('[data-link]').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-link');
+        showView(target);
+        if (target === 'docs' && link.hasAttribute('data-doc')) {
+            loadDoc(link.getAttribute('data-doc'));
         }
     });
-}, { threshold: 0.1 });
+});
 
-revealElements.forEach(el => observer.observe(el));
+// --- Markdown Rendering ---
+async function loadDoc(fileName) {
+    // Update active state in sidebar
+    document.querySelectorAll('.docs-nav-link').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-doc') === fileName);
+    });
 
-// Terminal Typing Simulation
+    try {
+        const response = await fetch(fileName);
+        if (!response.ok) throw new Error('Failed to load doc');
+        const markdown = await response.text();
+        
+        // Use marked to render markdown
+        docsContent.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
+        
+        // Highlight code blocks
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        window.scrollTo(0,0);
+    } catch (err) {
+        docsContent.innerHTML = `<p style="color: red;">Error loading documentation: ${err.message}</p>`;
+    }
+}
+
+// --- Terminal Simulation ---
 const terminalBody = document.getElementById('terminal-content');
 const codeLines = [
     '<span class="cyan">$ python cli.py</span>',
-    '<span class="amber">Loading Tolstoy AI v2.1...</span>',
-    'CUDA Device: NVIDIA GeForce RTX 4090 detected.',
-    'Model initialized with 12 layers, 768 hidden size.',
-    '',
+    '<span class="amber">Initializing Tolstoy Architecture v2.1...</span>',
+    'Hardware: [CUDA/RTX 4090] optimized.',
+    'Layers: 12 | Hidden: 768 | Heads: 12',
     '-------------------------------------------',
     '       [ TOLSTOY AI CONTROL PANEL ]',
     '-------------------------------------------',
-    '[1] Select Dataset         <span class="cyan">✔ OK</span>',
-    '[2] Data Cleaner           <span class="cyan">✔ Ready</span>',
+    '[1] Dataset Selection      <span class="cyan">✔ OK</span>',
+    '[2] Neural Cleaner         <span class="cyan">✔ Ready</span>',
     '[3] Start Training         <span class="amber">⏳ Pending</span>',
-    '[4] Run Chat Interface',
-    '[5] Debug & Diagnostics',
+    '[4] Interactive Chat',
+    '[5] System Diagnostics',
     '-------------------------------------------',
-    '',
     '<span class="cyan">Select option [1-5]: </span>'
 ];
 
 let lineIndex = 0;
 function typeCode() {
     if (lineIndex < codeLines.length) {
-        const line = document.createElement('div');
-        line.innerHTML = codeLines[lineIndex];
-        terminalBody.appendChild(line);
+        const div = document.createElement('div');
+        div.innerHTML = codeLines[lineIndex];
+        terminalBody.appendChild(div);
         lineIndex++;
-        setTimeout(typeCode, 300);
+        setTimeout(typeCode, 200);
     }
 }
 
-// Start typing when terminal is revealed
-const terminalObserver = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
         typeCode();
-        terminalObserver.disconnect();
+        observer.disconnect();
     }
 }, { threshold: 0.5 });
-
-terminalObserver.observe(document.querySelector('.terminal-window'));
+observer.observe(document.querySelector('.terminal-window'));

@@ -3,80 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tolstoy AI v2.1 | Посимвольная LLM нового поколения</title>
+    <title>Tolstoy AI v2.1 | Ecosystem</title>
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Highlight.js for Code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <link rel="shortcut icon" href="./assets/logo.png" type="image/png">
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
+    <div class="gradient-mesh"></div>
 
-    <div class="container">
-        <!-- Hero Section -->
+    <!-- Persistent Navigation -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <a href="#" class="logo" data-link="landing">
+                <img src="./assets/logo.png" alt="Logo">
+                TOLSTOY AI
+            </a>
+            <div class="nav-links">
+                <a href="#" data-link="landing">Главная</a>
+                <a href="#" data-link="docs">Документация</a>
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LANDING VIEW -->
+    <div id="landing-view" class="view-container container">
         <section class="hero">
-            <h1 data-reveal>TOLSTOY AI</h1>
-            <p data-reveal>Высокотехнологичная экосистема для обучения и лингвистического анализа языковых моделей. Имитация классического стиля с математической точностью.</p>
-            <div class="hero-btns" data-reveal>
-                <a href="https://github.com/zzzigrok/tolstoy-2.1" class="btn btn-primary">Посмотреть на GitHub</a>
+            <h1>TOLSTOY AI</h1>
+            <p>Новое поколение посимвольных языковых моделей для глубокого лингвистического анализа и имитации классического стиля.</p>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" data-link="docs">
+                    <i class="fas fa-book-open"></i> Читать документацию
+                </button>
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" class="btn btn-outline" target="_blank">
+                    GitHub Repo
+                </a>
             </div>
 
-            <!-- Terminal Preview -->
-            <div class="terminal-window" data-reveal>
-                <div class="terminal-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                    <span style="margin-left: auto; color: #666; font-size: 12px;">tolstoy_cli.py</span>
-                </div>
-                <div class="terminal-body" id="terminal-content">
-                    <!-- Typing simulation goes here -->
+            <div class="terminal-wrapper">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                        <span style="margin-left: auto; color: #666; font-size: 11px; font-family: monospace;">tolstoy_v2.1.sh</span>
+                    </div>
+                    <div class="terminal-body" id="terminal-content"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Features Section -->
-        <section class="features">
-            <h2 class="section-title" data-reveal>💎 Ключевые возможности</h2>
-            <div class="grid">
-                <div class="card" data-reveal>
-                    <i class="fas fa-microchip"></i>
-                    <h3>Оптимизированное ядро</h3>
-                    <p>Компактный Transformer (SimpleLLM), работающий на CUDA, MPS и даже CPU без потери качества.</p>
+        <section id="features" style="padding-bottom: 100px;">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>SimpleLLM Core</h3>
+                    <p>Легковесная архитектура Transformer, оптимизированная для инференса на потребительском железе.</p>
                 </div>
-                <div class="card" data-reveal>
-                    <i class="fas fa-spell-check"></i>
-                    <h3>Стилистическая точность</h3>
-                    <p>Распознавание паттернов Льва Толстого: от сложных связок до глубинной семантики предложений.</p>
+                <div class="feature-card">
+                    <i class="fas fa-feather-pointed"></i>
+                    <h3>Стилистический Движок</h3>
+                    <p>Продвинутая система семантического сбора промптов для воссоздания сложного синтаксиса.</p>
                 </div>
-                <div class="card" data-reveal>
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Лингвистический аудит</h3>
-                    <p>Автоматическая оценка качества генерации с расчетом лексического разнообразия (TTR).</p>
+                <div class="feature-card">
+                    <i class="fas fa-microscope"></i>
+                    <h3>Диагностика 2.1</h3>
+                    <p>Встроенный инструментарий для оценки TTR, когерентности и семантических связей.</p>
                 </div>
             </div>
         </section>
-
-        <!-- Architecture Section (Simplified) -->
-        <section class="features" style="background: rgba(0,0,0,0.2); border-radius: 40px; padding: 60px;">
-            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-                <h2 class="section-title" data-reveal>🏗 Архитектура 2.1</h2>
-                <p data-reveal style="color: var(--text-secondary); margin-bottom: 2rem;">
-                    Модульная структура, разделяющая ядро системы, модули обучения и движок диагностики. 
-                    Полная поддержка PyTorch 2.0+ и асинхронной обработки данных.
-                </p>
-                <img src="./assets/banner.png" alt="Architecture" style="width: 100%; border-radius: 15px; border: 1px solid var(--border-color);" data-reveal>
-            </div>
-        </section>
-
-        <footer>
-            <div class="container">
-                <p>&copy; 2026 Tolstoy AI Project. Интеллектуальный анализ русской классики.</p>
-                <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.5;">Powered by BladeStorm AI Studio</p>
-            </div>
-        </footer>
     </div>
 
+    <!-- DOCS VIEW -->
+    <div id="docs-view" class="view-container docs-view hidden">
+        <aside class="docs-sidebar">
+            <h4>Навигация</h4>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="README.md">Введение</a>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="MODEL.md">Архитектура</a>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="DATASET.md">Данные</a>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="TRAINING.md">Обучение</a>
+            
+            <h4 style="margin-top: 2rem;">Туториалы</h4>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="tutorials/QUICK_START.md">Быстрый старт</a>
+            <a href="#" class="docs-nav-link" data-link="docs" data-doc="tutorials/HYPERPARAMETERS.md">Параметры</a>
+        </aside>
+        
+        <main id="docs-content" class="docs-content">
+            <!-- Markdown content rendered here -->
+        </main>
+    </div>
+
+    <footer style="padding: 40px 0; text-align: center; opacity: 0.5; font-size: 0.8rem; border-top: 1px solid var(--border-dim);">
+        <p>&copy; 2026 Tolstoy AI Project. Все права защищены.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
