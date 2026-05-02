@@ -4,93 +4,169 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tolstoy AI v2.1 | Premium Landing</title>
+    <meta name="description" content="Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы. Оптимизирован для CUDA, MPS и CPU.">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="selection-cyan">
 
-    <canvas id="bg-canvas"></canvas>
-    <div class="glow-orb" style="top: 10%; left: 10%;"></div>
-    <div class="glow-orb" style="top: 70%; right: 15%; animation-delay: -3s;"></div>
+    <!-- Background Glows -->
+    <div class="bg-glow-cyan"></div>
+    <div class="bg-glow-purple"></div>
 
-    <nav>
-        <div class="container nav-content">
-            <a href="#" class="logo">TOLSTOY<span>AI</span></a>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i data-lucide="brain" class="logo-cyan"></i>
+                <span>TOLSTOY<span class="logo-cyan">AI</span></span>
+                <span class="version-badge">v2.1</span>
+            </div>
             <div class="nav-links">
-                <a href="#features">Технологии</a>
-                <a href="#gallery">Результаты</a>
-                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" class="btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">GitHub</a>
+                <a href="#features" class="nav-link">Архитектура</a>
+                <a href="#audit" class="nav-link">Лингво-аудит</a>
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="github-btn">
+                    <i data-lucide="github" style="width: 1rem; height: 1rem;"></i>
+                    <span>GitHub</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="badge">Tolstoy Core Engine 2.1</div>
-                <h1 class="gradient-text">Искусство <br> Кода и Слова</h1>
-                <p>Посимвольный Transformer, воссоздающий глубину классической литературы с математической точностью.</p>
-                <div class="hero-actions">
-                    <a href="#features" class="btn btn-primary">Узнать больше</a>
-                    <a href="#gallery" class="btn btn-outline">Примеры генерации</a>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge animate-fade-in-up">
+                <i data-lucide="sparkles" style="width: 1rem; height: 1rem;"></i>
+                Tolstoy Core Engine 2.1 — Посимвольная генерация
             </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="features">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Архитектура Разума</h2>
-                    <p style="color: var(--text-dim);">Сочетание классических основ и современных нейросетевых технологий.</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <i class="fas fa-brain"></i>
-                        <h3>Decoder Transformer</h3>
-                        <p>Оптимизированная архитектура для глубокого понимания контекста и стиля.</p>
-                    </div>
-                    <div class="feature-card">
-                        <i class="fas fa-microchip"></i>
-                        <h3>Hardware Ready</h3>
-                        <p>Полная поддержка CUDA, MPS и XPU для инференса на любом железе.</p>
-                    </div>
-                    <div class="feature-card">
-                        <i class="fas fa-code-branch"></i>
-                        <h3>Character Based</h3>
-                        <p>Генерация на уровне символов позволяет улавливать уникальный ритм текста.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gallery Section -->
-        <section id="gallery" class="demo-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Шедевры Модели</h2>
-                    <p>Результаты работы Tolstoy AI без правок и редактуры.</p>
-                </div>
-                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div class="feature-card" style="padding: 2rem;">
-                        <p style="font-style: italic; color: var(--text-dim);">"Все счастливые семьи похожи друг на друга, каждая несчастливая семья несчастлива по-своему..."</p>
-                        <div style="margin-top: 1rem; font-weight: 600; color: var(--accent-cyan); font-size: 0.8rem;">— Анна Каренина (AI Interpretation)</div>
-                    </div>
-                    <div class="feature-card" style="padding: 2rem;">
-                        <p style="font-style: italic; color: var(--text-dim);">"В это мгновение он почувствовал, что жизнь его не кончена, что впереди еще много света и тени..."</p>
-                        <div style="margin-top: 1rem; font-weight: 600; color: var(--accent-cyan); font-size: 0.8rem;">— Война и Мир (Style Transfer)</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p style="color: var(--text-dim); font-size: 0.9rem;">
-                © 2026 Tolstoy AI Project. Интеллектуальный мост между эпохами.
+            
+            <h1 class="hero-title animate-fade-in-up" style="animation-delay: 100ms;">
+                Искусство Кода <br> и Слова
+            </h1>
+            
+            <p class="hero-desc animate-fade-in-up" style="animation-delay: 200ms;">
+                Легковесный Decoder-only Transformer, воссоздающий глубину классической русской литературы с математической точностью. Оптимизирован для CUDA, MPS и CPU.
             </p>
+            
+            <div class="hero-actions animate-fade-in-up" style="animation-delay: 300ms;">
+                <a href="#features" class="btn-primary">
+                    <i data-lucide="brain" style="width: 1.25rem; height: 1.25rem;"></i>
+                    Изучить архитектуру
+                </a>
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" target="_blank" rel="noreferrer" class="btn-secondary">
+                    <i data-lucide="github" style="width: 1.25rem; height: 1.25rem;"></i>
+                    Проект на GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2 class="section-title">Архитектура Разума</h2>
+            <p class="section-desc">
+                Сочетание классических основ нейросетей и современных оптимизаций PyTorch.
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="brain" style="color: var(--cyan-400);"></i>
+                </div>
+                <h3 class="feature-title">SimpleLLM Ядро</h3>
+                <p class="feature-desc">Компактный Transformer с Multi-Head Attention и Pre-LayerNorm. Работает даже на домашнем железе.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="terminal" style="color: var(--purple-400);"></i>
+                </div>
+                <h3 class="feature-title">Rich Terminal UI</h3>
+                <p class="feature-desc">Премиальный интерфейс управления через CLI с дашбордами, графиками и меню диагностики.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="activity" style="color: #4ade80;"></i>
+                </div>
+                <h3 class="feature-title">Лингво-Аудит</h3>
+                <p class="feature-desc">Встроенный эвристический движок для оценки синтаксиса, TTR и выявления мусорных конструкций.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="database" style="color: #60a5fa;"></i>
+                </div>
+                <h3 class="feature-title">Чистые Данные</h3>
+                <p class="feature-desc">Автоматическая очистка корпусов текстов от артефактов парсинга и нестандартных символов.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="cpu" style="color: #fb923c;"></i>
+                </div>
+                <h3 class="feature-title">Кроссплатформенность</h3>
+                <p class="feature-desc">Нативная поддержка аппаратного ускорения для NVIDIA (CUDA), Apple Silicon (MPS) и Intel (XPU).</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="code-2" style="color: #f472b6;"></i>
+                </div>
+                <h3 class="feature-title">Character Based</h3>
+                <p class="feature-desc">Посимвольная токенизация улавливает уникальный авторский ритм и точную пунктуацию.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audit Section -->
+    <section id="audit" class="audit">
+        <div class="audit-icon-main">
+            <i data-lucide="activity" style="width: 2rem; height: 2rem;"></i>
+        </div>
+        <h2 class="section-title">Лингвистический Аудит</h2>
+        <p class="audit-desc">
+            Уникальный эвристический движок (<code>HeuristicSyntaxEngine</code>) анализирует сгенерированный текст, определяя части речи, фразеологизмы и сложность синтаксиса без внешних NLP-библиотек.
+        </p>
+
+        <div class="audit-grid">
+            <div class="audit-card">
+                <div class="audit-status">🟢</div>
+                <h4 class="audit-card-title">Высокая связность</h4>
+                <p class="audit-card-desc">Модель строит сложные предложения, соблюдает пунктуацию и использует союзы.</p>
+            </div>
+            <div class="audit-card">
+                <div class="audit-status">🟡</div>
+                <h4 class="audit-card-title">Базовое понимание</h4>
+                <p class="audit-card-desc">Простые конструкции, возможны мелкие ошибки в запятых или редкие галлюцинации.</p>
+            </div>
+            <div class="audit-card">
+                <div class="audit-status">🔴</div>
+                <h4 class="audit-card-title">Низкая точность</h4>
+                <p class="audit-card-desc">"Словесный салат", модель не выучила структуру языка (требуется дообучение).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <i data-lucide="brain" style="width: 1.5rem; height: 1.5rem;"></i>
+                <span>TOLSTOY AI</span>
+            </div>
+            <p class="footer-copy">
+                © 2026 Tolstoy AI Project. Распространяется под лицензией MIT.
+            </p>
+            <div class="footer-social">
+                <a href="https://github.com/zzzigrok/tolstoy-2.1" class="social-link">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
         </div>
     </footer>
 
