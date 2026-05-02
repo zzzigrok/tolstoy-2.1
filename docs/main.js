@@ -106,10 +106,14 @@ document.querySelectorAll('[data-link]').forEach(link => {
 
 // Event listener for anchor links in markdown
 docsContent.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+    const anchor = e.target.closest('a');
+    if (anchor && anchor.getAttribute('href')?.startsWith('#')) {
         e.preventDefault();
-        const targetId = e.target.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
+        let rawId = anchor.getAttribute('href').substring(1);
+        let decodedId = decodeURIComponent(rawId);
+        
+        let targetElement = document.getElementById(decodedId) || document.getElementById(rawId);
+        
         if (targetElement) {
             // Adjust scroll for sticky header offset
             const offset = 100;
@@ -119,7 +123,9 @@ docsContent.addEventListener('click', (e) => {
                 top: offsetPosition,
                 behavior: 'smooth'
             });
-            history.pushState(null, null, '#' + targetId);
+            history.pushState(null, null, '#' + rawId);
+        } else {
+            console.warn('Anchor not found:', decodedId);
         }
     }
 });
@@ -139,6 +145,14 @@ async function loadDoc(fileName) {
         // Use marked to render markdown
         docsContent.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
         
+        // Ensure all headings have IDs for anchor links
+        docsContent.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
+            if (!heading.id) {
+                let id = heading.textContent.toLowerCase().replace(/[^\wа-яё]+/gi, '-').replace(/(^-|-$)/g, '');
+                heading.id = id;
+            }
+        });
+
         // Transform Mermaid blocks from marked output
         document.querySelectorAll('pre code.language-mermaid').forEach(block => {
             const pre = block.parentElement;
