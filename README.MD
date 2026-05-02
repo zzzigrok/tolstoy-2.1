@@ -1,13 +1,12 @@
 # 📚 Tolstoy AI (v2.1)
 
-<p align="center">
-  <img src="assets/logo.png" width="250" alt="Tolstoy AI Logo">
-</p>
+![Tolstoy AI Banner](assets/banner.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.9+-blue.svg?style=for-the-badge&logo=python" alt="Python Version">
   <img src="https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg?style=for-the-badge&logo=pytorch" alt="PyTorch">
   <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Interface-Rich%20TUI-cyan.svg?style=for-the-badge" alt="Interface">
 </p>
 
 ---
