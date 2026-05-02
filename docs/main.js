@@ -104,18 +104,22 @@ document.querySelectorAll('[data-link]').forEach(link => {
     });
 });
 
-// Event listener for anchor links in markdown
+// Event listener for links in markdown
 docsContent.addEventListener('click', (e) => {
     const anchor = e.target.closest('a');
-    if (anchor && anchor.getAttribute('href')?.startsWith('#')) {
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+
+    // Handle Anchor Links (#section)
+    if (href?.startsWith('#')) {
         e.preventDefault();
-        let rawId = anchor.getAttribute('href').substring(1);
+        let rawId = href.substring(1);
         let decodedId = decodeURIComponent(rawId);
         
         let targetElement = document.getElementById(decodedId) || document.getElementById(rawId);
         
         if (targetElement) {
-            // Adjust scroll for sticky header offset
             const offset = 100;
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.scrollY - offset;
@@ -124,9 +128,12 @@ docsContent.addEventListener('click', (e) => {
                 behavior: 'smooth'
             });
             history.pushState(null, null, '#' + rawId);
-        } else {
-            console.warn('Anchor not found:', decodedId);
         }
+    } 
+    // Handle Markdown File Links (.md)
+    else if (href?.endsWith('.md')) {
+        e.preventDefault();
+        loadDoc(href);
     }
 });
 
