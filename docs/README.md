@@ -1,6 +1,6 @@
 # 📚 Tolstoy AI (v2.1)
 
-![Tolstoy AI Banner](../assets/banner.png)
+![Tolstoy AI Banner](./assets/banner.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.9+-blue.svg?style=for-the-badge&logo=python" alt="Python Version">
