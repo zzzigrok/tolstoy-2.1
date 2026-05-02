@@ -1,6 +1,8 @@
 # 📚 Tolstoy AI v2.1 — Интеллектуальная Лингвистическая Студия
 
-![Tolstoy AI Banner](assets/banner.png)
+<p align="center">
+  <img src="assets/logo.svg" width="300" alt="Tolstoy AI Logo">
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.9+-blue.svg?style=for-the-badge&logo=python&logoColor=white" alt="Python">

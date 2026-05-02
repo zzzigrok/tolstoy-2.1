@@ -86,40 +86,48 @@ const BackgroundOrbs = () => (
 
 // --- Кастомный SVG Логотип (Перо + Нейросеть) ---
 const AnimatedLogo = () => (
-  <svg viewBox="0 0 120 120" className="w-full h-full max-w-[320px] max-h-[320px] drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+  <svg viewBox="0 0 512 512" className="w-full h-full max-w-[400px] max-h-[400px] drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+    <defs>
+      <linearGradient id="netGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#a855f7" />
+        <stop offset="50%" stop-color="#c084fc" />
+        <stop offset="100%" stop-color="#d8b4fe" />
+      </linearGradient>
+      <filter id="cyanGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur2" />
+        <feMerge>
+          <feMergeNode in="blur2" />
+          <feMergeNode in="blur1" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
     <g className="logo-float">
-      {/* Нейронная сеть (Фон) */}
-      <path d="M 60 75 L 85 60 L 100 80 L 80 100 Z" fill="none" stroke="#22d3ee" strokeWidth="0.5" className="path-draw" opacity="0.5" />
-      <path d="M 85 60 L 105 45 L 100 80" fill="none" stroke="#22d3ee" strokeWidth="0.5" className="path-draw" opacity="0.5" style={{animationDelay: '0.2s'}} />
-      <path d="M 60 75 L 75 95 L 80 100" fill="none" stroke="#22d3ee" strokeWidth="0.5" className="path-draw" opacity="0.5" style={{animationDelay: '0.4s'}} />
-      
-      {/* Узлы сети */}
-      <circle cx="60" cy="75" fill="#22d3ee" className="node-pulse" style={{animationDelay: '0s'}} />
-      <circle cx="85" cy="60" fill="#22d3ee" className="node-pulse" style={{animationDelay: '0.4s'}} />
-      <circle cx="100" cy="80" fill="#22d3ee" className="node-pulse" style={{animationDelay: '0.8s'}} />
-      <circle cx="80" cy="100" fill="#22d3ee" className="node-pulse" style={{animationDelay: '1.2s'}} />
-      <circle cx="105" cy="45" fill="#22d3ee" className="node-pulse" style={{animationDelay: '1.6s'}} />
-      <circle cx="75" cy="95" fill="#22d3ee" className="node-pulse" style={{animationDelay: '2.0s'}} />
-
-      {/* Главное Перо (Классика) */}
-      <path 
-        d="M 20 100 C 20 100, 35 75, 55 55 C 75 35, 95 15, 105 10 C 85 20, 60 40, 45 60 C 30 80, 20 100, 20 100 Z" 
-        fill="rgba(255,255,255,0.05)" 
-        stroke="#ffffff" 
-        strokeWidth="1.5"
-        className="path-draw backdrop-blur-sm"
-      />
-      {/* Детали пера */}
-      <path d="M 20 100 L 105 10" stroke="#ffffff" strokeWidth="1" className="path-draw" opacity="0.4" />
-      <path d="M 45 60 C 55 55, 65 40, 75 35" stroke="#ffffff" strokeWidth="1" className="path-draw" opacity="0.6" style={{animationDelay: '0.5s'}} />
-      <path d="M 60 45 C 70 40, 80 25, 90 20" stroke="#ffffff" strokeWidth="1" className="path-draw" opacity="0.6" style={{animationDelay: '0.7s'}} />
-      <path d="M 35 70 C 45 65, 55 50, 65 45" stroke="#ffffff" strokeWidth="1" className="path-draw" opacity="0.6" style={{animationDelay: '0.9s'}} />
-      
-      {/* Энергетическая связь между пером и сетью */}
-      <path d="M 20 100 Q 40 110, 60 75" fill="none" stroke="#c084fc" strokeWidth="1.5" strokeDasharray="4 4" className="path-draw" style={{animationDelay: '1.5s'}} />
+      <path d="M 130 380 L 105 345 L 90 290 M 175 335 L 135 305 L 110 230 M 220 285 L 175 250 L 145 175 M 265 235 L 220 195 L 195 125 M 310 185 L 275 145 L 255 85 M 350 140 L 325 105 L 310 60 M 385 105 L 365 75 M 105 345 L 135 305 L 175 250 L 220 195 L 275 145 L 325 105 L 365 75 M 90 290 L 110 230 L 145 175 L 195 125 L 255 85 L 310 60 M 310 60 L 365 75 M 365 75 L 400 100 M 130 380 L 135 305 M 175 335 L 175 250 M 220 285 L 220 195 M 265 235 L 275 145 M 310 185 L 325 105 M 350 140 L 365 75 M 385 105 L 400 100 M 105 345 L 110 230 M 135 305 L 145 175 M 175 250 L 195 125 M 220 195 L 255 85 M 275 145 L 310 60 M 325 105 L 310 60 M 90 290 L 80 280 M 110 230 L 95 210 M 145 175 L 130 150 M 195 125 L 180 100 M 255 85 L 235 65 M 80 280 L 95 210 L 130 150 L 180 100 L 235 65 L 310 60 M 80 280 L 110 230 M 95 210 L 145 175 M 130 150 L 195 125 M 180 100 L 255 85 M 235 65 L 310 60" stroke="url(#netGrad)" stroke-width="1.25" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" className="path-draw" />
+      <path d="M 400,100 C 420,130 435,170 425,200 L 405,190 L 420,215 C 440,250 420,280 400,310 L 360,290 L 380,325 C 330,400 220,430 90,430 C 170,380 260,280 400,100 Z" fill="#ffffff" />
+      <path d="M 65,455 L 90,430 C 170,380 260,280 400,100" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none" className="path-draw" />
+      <g fill="#22d3ee" filter="url(#cyanGlow)">
+        <circle cx="130" cy="380" r="3.5" className="node-pulse" />
+        <circle cx="175" cy="335" r="3.5" className="node-pulse" style={{animationDelay: '0.2s'}} />
+        <circle cx="220" cy="285" r="3.5" className="node-pulse" style={{animationDelay: '0.4s'}} />
+        <circle cx="265" cy="235" r="3.5" className="node-pulse" style={{animationDelay: '0.6s'}} />
+        <circle cx="310" cy="185" r="3.5" className="node-pulse" style={{animationDelay: '0.8s'}} />
+        <circle cx="350" cy="140" r="3.5" className="node-pulse" style={{animationDelay: '1.0s'}} />
+        <circle cx="385" cy="105" r="3.5" className="node-pulse" style={{animationDelay: '1.2s'}} />
+        <circle cx="105" cy="345" r="2.5" className="node-pulse" style={{animationDelay: '1.4s'}} />
+        <circle cx="135" cy="305" r="2.5" className="node-pulse" style={{animationDelay: '1.6s'}} />
+        <circle cx="175" cy="250" r="2.5" className="node-pulse" style={{animationDelay: '1.8s'}} />
+        <circle cx="220" cy="195" r="2.5" className="node-pulse" style={{animationDelay: '2.0s'}} />
+        <circle cx="275" cy="145" r="2.5" className="node-pulse" style={{animationDelay: '2.2s'}} />
+        <circle cx="325" cy="105" r="2.5" className="node-pulse" style={{animationDelay: '2.4s'}} />
+        <circle cx="365" cy="75" r="2.5" className="node-pulse" style={{animationDelay: '2.6s'}} />
+        <circle cx="400" cy="100" r="2" />
+      </g>
     </g>
   </svg>
 );
+
 
 // --- Секции Лендинга ---
 const Navbar = () => {
