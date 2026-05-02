@@ -57,6 +57,11 @@ window.addEventListener('resize', initCanvas);
 initCanvas();
 animate();
 
+// --- Marked Plugins ---
+if (window.markedGfmHeadingId) {
+    marked.use(window.markedGfmHeadingId.gfmHeadingId());
+}
+
 // --- Mermaid Init ---
 mermaid.initialize({
     startOnLoad: false,
@@ -99,6 +104,26 @@ document.querySelectorAll('[data-link]').forEach(link => {
     });
 });
 
+// Event listener for anchor links in markdown
+docsContent.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+        e.preventDefault();
+        const targetId = e.target.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            // Adjust scroll for sticky header offset
+            const offset = 100;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+            history.pushState(null, null, '#' + targetId);
+        }
+    }
+});
+
 // --- Markdown Rendering ---
 async function loadDoc(fileName) {
     // Update active state in sidebar
@@ -114,9 +139,18 @@ async function loadDoc(fileName) {
         // Use marked to render markdown
         docsContent.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
         
+        // Transform Mermaid blocks from marked output
+        document.querySelectorAll('pre code.language-mermaid').forEach(block => {
+            const pre = block.parentElement;
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = block.textContent;
+            pre.replaceWith(mermaidDiv);
+        });
+
         // Render Mermaid Diagrams
         await mermaid.run({
-            nodes: document.querySelectorAll('.language-mermaid')
+            nodes: document.querySelectorAll('.mermaid')
         });
 
         // Highlight code blocks
