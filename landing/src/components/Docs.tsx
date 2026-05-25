@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { ArrowLeft, Search, ChevronRight, ChevronDown, Menu, X, Clock } from 'lucide-react';
 import mermaid from 'mermaid';
 import { docsData } from '../docsData';
@@ -54,12 +54,13 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Mermaid rendering
-  useEffect(() => {
-    let isMounted = true;
+  // Callback ref to render Mermaid diagrams reliably when the container mounts
+  const docsContainerRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const containerNode = node;
     
     async function renderMermaid() {
-      const elements = document.querySelectorAll('pre code.language-mermaid');
+      const elements = containerNode.querySelectorAll('pre code.language-mermaid');
       if (elements.length === 0) return;
       
       try {
@@ -80,26 +81,18 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
           const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
           const { svg } = await mermaid.render(id, chartText);
           
-          if (isMounted && parent) {
-            const container = document.createElement('div');
-            container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
-            container.innerHTML = svg;
-            parent.replaceWith(container);
-          }
+          const container = document.createElement('div');
+          container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
+          container.innerHTML = svg;
+          parent.replaceWith(container);
         }
       } catch (err) {
         console.error('Mermaid render error:', err);
       }
     }
 
-    const timer = setTimeout(() => {
-      renderMermaid();
-    }, 50);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
+    // Run next frame to ensure browser has processed the innerHTML
+    setTimeout(renderMermaid, 0);
   }, [activeItem.id]);
 
 
@@ -348,6 +341,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
           <article className="min-h-[500px]">
             <div
               key={activeItem.id}
+              ref={docsContainerRef}
               className="prose-docs"
               dangerouslySetInnerHTML={{ __html: preparedHtml }}
             />
