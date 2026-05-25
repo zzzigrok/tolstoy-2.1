@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+
+# Project specific folders
+scratch/
+
+# Models and Data (Binary and large files)
+models/model_weights.pth
+models/vocab.pkl
+data/input_ru.txt
+data/tolstoy.log
+data/chat_history.txt
+
+# Dataset source
+raw_text.txt
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
