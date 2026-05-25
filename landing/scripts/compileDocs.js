@@ -1,6 +1,58 @@
 import fs from 'fs';
 import path from 'path';
 import { marked } from 'marked';
+import katex from 'katex';
+
+// Setup marked custom extensions for math formulas
+const inlineMath = {
+  name: 'inlineMath',
+  level: 'inline',
+  start(src) { return src.indexOf('$'); },
+  tokenizer(src, tokens) {
+    const match = src.match(/^\$([^$\n]+?)\$/);
+    if (match && match[1].trim()) {
+      return {
+        type: 'inlineMath',
+        raw: match[0],
+        formula: match[1].trim()
+      };
+    }
+  },
+  renderer(token) {
+    try {
+      return katex.renderToString(token.formula, { displayMode: false, throwOnError: false });
+    } catch (err) {
+      console.error('KaTeX inline math error:', err);
+      return token.raw;
+    }
+  }
+};
+
+const blockMath = {
+  name: 'blockMath',
+  level: 'block',
+  start(src) { return src.indexOf('$$'); },
+  tokenizer(src, tokens) {
+    const match = src.match(/^\$\$([\s\S]+?)\$\$/);
+    if (match && match[1].trim()) {
+      return {
+        type: 'blockMath',
+        raw: match[0],
+        formula: match[1].trim()
+      };
+    }
+  },
+  renderer(token) {
+    try {
+      return `<div class="katex-block">${katex.renderToString(token.formula, { displayMode: true, throwOnError: false })}</div>`;
+    } catch (err) {
+      console.error('KaTeX block math error:', err);
+      return token.raw;
+    }
+  }
+};
+
+marked.use({ extensions: [blockMath, inlineMath] });
 
 // Define project root directory relative to script
 const projectRoot = fs.existsSync('docs_2.1') 
@@ -46,23 +98,23 @@ function parseAlerts(content) {
       
       switch (type) {
         case 'TIP':
-          icon = '💡';
-          title = 'Совет:';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`;
+          title = 'Совет';
           className = 'alert-tip';
           break;
         case 'IMPORTANT':
-          icon = '📢';
-          title = 'Важно:';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>`;
+          title = 'Важно';
           className = 'alert-important';
           break;
         case 'WARNING':
-          icon = '⚠️';
-          title = 'Внимание:';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>`;
+          title = 'Внимание';
           className = 'alert-warning';
           break;
         case 'NOTE':
-          icon = 'ℹ️';
-          title = 'Примечание:';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
+          title = 'Примечание';
           className = 'alert-note';
           break;
       }
@@ -70,7 +122,7 @@ function parseAlerts(content) {
       const innerContent = alertLines.join('\n').trim();
       const htmlContent = marked.parse(innerContent).trim();
       
-      const alertHtml = `<div class="alert-box ${className}"><span class="alert-icon">${icon}</span><strong>${title}</strong> ${htmlContent}</div>`;
+      const alertHtml = `<div class="alert-box ${className}"><div class="alert-icon">${icon}</div><div class="alert-content"><span class="alert-title">${title}</span><div class="alert-text">${htmlContent}</div></div></div>`;
       resultLines.push(alertHtml);
     } else {
       resultLines.push(line);

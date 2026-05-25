@@ -3,6 +3,7 @@ import { ArrowLeft, Search, ChevronRight, ChevronDown, Menu, X, Clock } from 'lu
 import mermaid from 'mermaid';
 import { docsData } from '../docsData';
 import type { DocItem } from '../docsData';
+import 'katex/dist/katex.min.css';
 
 interface DocsProps {
   setCurrentPage: (page: 'home' | 'docs') => void;
@@ -55,10 +56,17 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
 
   // Mermaid rendering
   useEffect(() => {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-    mermaid.run({
-      querySelector: '.mermaid'
-    }).catch(err => console.error('Mermaid render error:', err));
+    const timer = setTimeout(() => {
+      try {
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        mermaid.run({
+          querySelector: '.mermaid'
+        }).catch(err => console.error('Mermaid render error:', err));
+      } catch (err) {
+        console.error('Mermaid initialization/run error:', err);
+      }
+    }, 50);
+    return () => clearTimeout(timer);
   }, [activeItem.id]);
 
   // Intersection Observer for headings
@@ -317,6 +325,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
           {/* Main Text Pane */}
           <article className="min-h-[500px]">
             <div
+              key={activeItem.id}
               className="prose-docs"
               dangerouslySetInnerHTML={{ __html: preparedHtml }}
             />

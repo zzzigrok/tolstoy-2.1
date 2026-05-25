@@ -9,9 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d ../docs"
   },
   "dependencies": {
+    "katex": "^0.17.0",
     "lucide-react": "^1.16.0",
     "marked": "^18.0.4",
     "mermaid": "^11.15.0",
