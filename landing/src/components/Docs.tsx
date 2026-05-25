@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { ArrowLeft, Search, ChevronRight, ChevronDown, Menu, X, Clock } from 'lucide-react';
-import mermaid from 'mermaid';
 import { docsData } from '../docsData';
 import type { DocItem } from '../docsData';
 import 'katex/dist/katex.min.css';
+import { createRoot } from 'react-dom/client';
+import { Mermaid } from './Mermaid';
 
 interface DocsProps {
   setCurrentPage: (page: 'home' | 'docs') => void;
@@ -30,6 +31,21 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const mermaidRootsRef = useRef<any[]>([]);
+
+  // Cleanup Mermaid roots when navigation changes to prevent memory leaks and duplicate rendering
+  useEffect(() => {
+    return () => {
+      mermaidRootsRef.current.forEach(root => {
+        try {
+          root.unmount();
+        } catch (e) {
+          // ignore
+        }
+      });
+      mermaidRootsRef.current = [];
+    };
+  }, [activeItem.id]);
 
   // Keyboard shortcut handler (pressing '/' focuses the search input)
   useEffect(() => {
@@ -73,59 +89,32 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
       
       if (elements.length === 0) return;
       
-      try {
-        if (!mermaid || typeof mermaid.initialize !== 'function') {
-          throw new Error(`Mermaid import is invalid: ${typeof mermaid}`);
-        }
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i] as HTMLElement;
+        const parent = el.closest('pre') || el.parentElement;
+        if (!parent) continue;
         
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: 'dark',
-          securityLevel: 'loose'
-        });
+        if (el.dataset.mermaidProcessed === 'true') continue;
+        el.dataset.mermaidProcessed = 'true';
         
-        for (let i = 0; i < elements.length; i++) {
-          const el = elements[i] as HTMLElement;
-          const parent = el.closest('pre') || el.parentElement;
-          if (!parent) continue;
-          
-          if (el.dataset.mermaidProcessed === 'true') continue;
-          el.dataset.mermaidProcessed = 'true';
-          
-          let chartText = el.textContent || '';
-          if (!chartText.trim()) continue;
-          
-          // Decode HTML entities if any exist (e.g. &gt; -> >)
-          const parser = new DOMParser();
-          const decodedDoc = parser.parseFromString(chartText, 'text/html');
-          chartText = decodedDoc.body.textContent || chartText;
-          
-          const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
-          
-          try {
-            const { svg } = await mermaid.render(id, chartText);
-            const container = document.createElement('div');
-            container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
-            container.innerHTML = svg;
-            parent.replaceWith(container);
-          } catch (renderError: any) {
-            console.error('Mermaid render error for chart:', chartText, renderError);
-            const errDiv = document.createElement('div');
-            errDiv.className = 'p-4 my-4 bg-red-950/40 border border-red-500/30 text-red-400 rounded-lg text-xs font-mono';
-            errDiv.innerHTML = `<div><strong>Mermaid Render Error:</strong> ${renderError?.message || renderError}</div><pre class="mt-2 p-2 bg-black/40 rounded overflow-x-auto text-[10px]">${chartText}</pre>`;
-            parent.replaceWith(errDiv);
-          }
-        }
-      } catch (err: any) {
-        console.error('Mermaid initialization/render error:', err);
-        // Show initialization error on the first element as a fallback
-        const firstEl = elements[0] as HTMLElement;
-        const parent = firstEl.closest('pre') || firstEl.parentElement;
-        if (parent) {
-          const errDiv = document.createElement('div');
-          errDiv.className = 'p-4 my-4 bg-red-950/40 border border-red-500/30 text-red-400 rounded-lg text-xs font-mono';
-          errDiv.innerHTML = `<strong>Mermaid Initialization Error:</strong> ${err?.message || err}`;
-          parent.replaceWith(errDiv);
+        let chartText = el.textContent || '';
+        if (!chartText.trim()) continue;
+        
+        // Decode HTML entities if any exist (e.g. &gt; -> >)
+        const parser = new DOMParser();
+        const decodedDoc = parser.parseFromString(chartText, 'text/html');
+        chartText = decodedDoc.body.textContent || chartText;
+        
+        // Create mount point
+        const mountPoint = document.createElement('div');
+        parent.replaceWith(mountPoint);
+        
+        try {
+          const root = createRoot(mountPoint);
+          root.render(<Mermaid chart={chartText} />);
+          mermaidRootsRef.current.push(root);
+        } catch (e) {
+          console.error('Failed to create root or render Mermaid component', e);
         }
       }
     }
