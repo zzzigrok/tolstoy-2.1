@@ -64,6 +64,10 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
       if (elements.length === 0) return;
       
       try {
+        if (!mermaid || typeof mermaid.initialize !== 'function') {
+          throw new Error(`Mermaid import is invalid: ${typeof mermaid}`);
+        }
+        
         mermaid.initialize({
           startOnLoad: false,
           theme: 'dark',
@@ -79,15 +83,32 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
           if (!chartText.trim()) continue;
           
           const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
-          const { svg } = await mermaid.render(id, chartText);
           
-          const container = document.createElement('div');
-          container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
-          container.innerHTML = svg;
-          parent.replaceWith(container);
+          try {
+            const { svg } = await mermaid.render(id, chartText);
+            const container = document.createElement('div');
+            container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
+            container.innerHTML = svg;
+            parent.replaceWith(container);
+          } catch (renderError: any) {
+            console.error('Mermaid render error for chart:', chartText, renderError);
+            const errDiv = document.createElement('div');
+            errDiv.className = 'p-4 my-4 bg-red-950/40 border border-red-500/30 text-red-400 rounded-lg text-xs font-mono';
+            errDiv.innerHTML = `<div><strong>Mermaid Render Error:</strong> ${renderError?.message || renderError}</div><pre class="mt-2 p-2 bg-black/40 rounded overflow-x-auto text-[10px]">${chartText}</pre>`;
+            parent.replaceWith(errDiv);
+          }
         }
-      } catch (err) {
-        console.error('Mermaid render error:', err);
+      } catch (err: any) {
+        console.error('Mermaid initialization/render error:', err);
+        // Show initialization error on the first element as a fallback
+        const firstEl = elements[0] as HTMLElement;
+        const parent = firstEl.parentElement;
+        if (parent) {
+          const errDiv = document.createElement('div');
+          errDiv.className = 'p-4 my-4 bg-red-950/40 border border-red-500/30 text-red-400 rounded-lg text-xs font-mono';
+          errDiv.innerHTML = `<strong>Mermaid Initialization Error:</strong> ${err?.message || err}`;
+          parent.replaceWith(errDiv);
+        }
       }
     }
 
