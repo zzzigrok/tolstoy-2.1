@@ -56,18 +56,52 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
 
   // Mermaid rendering
   useEffect(() => {
-    const timer = setTimeout(() => {
+    let isMounted = true;
+    
+    async function renderMermaid() {
+      const elements = document.querySelectorAll('pre code.language-mermaid');
+      if (elements.length === 0) return;
+      
       try {
-        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-        mermaid.run({
-          querySelector: '.mermaid'
-        }).catch(err => console.error('Mermaid render error:', err));
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          securityLevel: 'loose'
+        });
+        
+        for (let i = 0; i < elements.length; i++) {
+          const el = elements[i] as HTMLElement;
+          const parent = el.parentElement;
+          if (!parent) continue;
+          
+          const chartText = el.textContent || '';
+          if (!chartText.trim()) continue;
+          
+          const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
+          const { svg } = await mermaid.render(id, chartText);
+          
+          if (isMounted && parent) {
+            const container = document.createElement('div');
+            container.className = 'mermaid-container my-6 flex justify-center bg-slate-950/20 border border-slate-800/50 p-6 rounded-xl overflow-x-auto';
+            container.innerHTML = svg;
+            parent.replaceWith(container);
+          }
+        }
       } catch (err) {
-        console.error('Mermaid initialization/run error:', err);
+        console.error('Mermaid render error:', err);
       }
+    }
+
+    const timer = setTimeout(() => {
+      renderMermaid();
     }, 50);
-    return () => clearTimeout(timer);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [activeItem.id]);
+
 
   // Intersection Observer for headings
   useEffect(() => {
@@ -93,21 +127,9 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     };
   }, [activeItem.id]);
 
-  // Helper to convert mermaid code blocks in html and decode basic HTML entities inside them
+  // Return the compiled HTML directly since Mermaid will be dynamically swapped in the useEffect hook
   const preparedHtml = useMemo(() => {
-    return activeItem.html.replace(
-      /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
-      (_, code) => {
-        const decoded = code
-          .replace(/&quot;/g, '"')
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&#39;/g, "'")
-          .replace(/&apos;/g, "'");
-        return `<div class="mermaid">${decoded}</div>`;
-      }
-    );
+    return activeItem.html;
   }, [activeItem.html]);
 
   // Flattened items for search
