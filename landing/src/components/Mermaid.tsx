@@ -57,6 +57,10 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
     let isMounted = true;
     const cleanChart = chart.trim();
 
+    if (typeof (window as any).logMermaidDebug === 'function') {
+      (window as any).logMermaidDebug(`Mermaid Component useEffect triggered for chart length: ${cleanChart.length}`);
+    }
+
     const renderChart = async () => {
       try {
         setError(null);
@@ -65,9 +69,17 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
         const uniqueId = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
         elementIdRef.current = uniqueId;
 
+        if (typeof (window as any).logMermaidDebug === 'function') {
+          (window as any).logMermaidDebug(`Mermaid.render starting with id ${uniqueId}`);
+        }
+
         // Render diagram
         const { svg: renderedSvg } = await mermaid.render(uniqueId, cleanChart);
         
+        if (typeof (window as any).logMermaidDebug === 'function') {
+          (window as any).logMermaidDebug(`Mermaid.render success. SVG length: ${renderedSvg.length}`);
+        }
+
         if (isMounted) {
           // Wrap the SVG in a responsive wrapper and remove inline style overrides that restrict sizing
           let processedSvg = renderedSvg;
@@ -81,6 +93,10 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
         console.error('Mermaid rendering error:', err);
         const errorMessage = err instanceof Error ? err.message : String(err);
         
+        if (typeof (window as any).logMermaidDebug === 'function') {
+          (window as any).logMermaidDebug(`Mermaid.render threw error: ${errorMessage}`);
+        }
+
         // Catch dynamic module loading failures (due to new build deploying and changing chunk hashes)
         const isDynamicImportError = 
           /failed\s+to\s+fetch\s+dynamically\s+imported\s+module/i.test(errorMessage) ||

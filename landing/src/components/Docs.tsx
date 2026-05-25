@@ -75,30 +75,61 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     if (!node) return;
     const containerNode = node;
     
+    // Setup window level log function
+    (window as any).logMermaidDebug = (msg: string) => {
+      console.log('[MermaidDebug]', msg);
+      const debugEl = document.getElementById('mermaid-debug-panel');
+      if (debugEl) {
+        const logLine = document.createElement('div');
+        logLine.className = 'border-b border-white/5 py-0.5';
+        logLine.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
+        debugEl.appendChild(logLine);
+      }
+    };
+
+    (window as any).logMermaidDebug('docsContainerRef callback triggered');
+
     async function renderMermaid() {
+      (window as any).logMermaidDebug('renderMermaid() started');
       let elements = containerNode.querySelectorAll('.language-mermaid');
       let retries = 0;
       const maxRetries = 15;
       
+      (window as any).logMermaidDebug(`Initial query returned ${elements.length} elements`);
+      
       // If no elements found, wait and retry (handles timing/race conditions in React mounting)
       while (elements.length === 0 && retries < maxRetries) {
+        (window as any).logMermaidDebug(`Retry ${retries + 1}: no elements found, waiting...`);
         await new Promise((resolve) => setTimeout(resolve, 50));
         elements = containerNode.querySelectorAll('.language-mermaid');
         retries++;
       }
+      
+      (window as any).logMermaidDebug(`Final query returned ${elements.length} elements`);
       
       if (elements.length === 0) return;
       
       for (let i = 0; i < elements.length; i++) {
         const el = elements[i] as HTMLElement;
         const parent = el.closest('pre') || el.parentElement;
-        if (!parent) continue;
+        if (!parent) {
+          (window as any).logMermaidDebug(`Element ${i}: no parent found`);
+          continue;
+        }
         
-        if (el.dataset.mermaidProcessed === 'true') continue;
+        if (el.dataset.mermaidProcessed === 'true') {
+          (window as any).logMermaidDebug(`Element ${i}: already processed`);
+          continue;
+        }
         el.dataset.mermaidProcessed = 'true';
         
         let chartText = el.textContent || '';
-        if (!chartText.trim()) continue;
+        if (!chartText.trim()) {
+          (window as any).logMermaidDebug(`Element ${i}: chart text is empty`);
+          continue;
+        }
+        
+        (window as any).logMermaidDebug(`Element ${i}: chart text length: ${chartText.length}`);
         
         // Decode HTML entities if any exist (e.g. &gt; -> >)
         const parser = new DOMParser();
@@ -110,10 +141,14 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
         parent.replaceWith(mountPoint);
         
         try {
+          (window as any).logMermaidDebug(`Element ${i}: creating root`);
           const root = createRoot(mountPoint);
+          (window as any).logMermaidDebug(`Element ${i}: rendering component`);
           root.render(<Mermaid chart={chartText} />);
           mermaidRootsRef.current.push(root);
-        } catch (e) {
+          (window as any).logMermaidDebug(`Element ${i}: root created successfully`);
+        } catch (e: any) {
+          (window as any).logMermaidDebug(`Element ${i} error: ${e?.message || e}`);
           console.error('Failed to create root or render Mermaid component', e);
         }
       }
@@ -362,6 +397,12 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
               <Clock className="w-3.5 h-3.5" />
               <span>Время чтения: {activeItem.readingTime} мин</span>
             </div>
+          </div>
+
+          {/* Debug panel */}
+          <div className="p-4 my-4 bg-slate-950/60 border border-amber-500/30 text-amber-400 rounded-xl text-xs font-mono max-h-48 overflow-y-auto">
+            <strong>Mermaid Debug Panel:</strong>
+            <div id="mermaid-debug-panel" className="mt-2 space-y-1"></div>
           </div>
 
           {/* Main Text Pane */}
