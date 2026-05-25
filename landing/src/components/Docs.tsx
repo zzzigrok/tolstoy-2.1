@@ -60,7 +60,17 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     const containerNode = node;
     
     async function renderMermaid() {
-      const elements = containerNode.querySelectorAll('pre code.language-mermaid');
+      let elements = containerNode.querySelectorAll('.language-mermaid');
+      let retries = 0;
+      const maxRetries = 15;
+      
+      // If no elements found, wait and retry (handles timing/race conditions in React mounting)
+      while (elements.length === 0 && retries < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        elements = containerNode.querySelectorAll('.language-mermaid');
+        retries++;
+      }
+      
       if (elements.length === 0) return;
       
       try {
@@ -76,11 +86,19 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
         
         for (let i = 0; i < elements.length; i++) {
           const el = elements[i] as HTMLElement;
-          const parent = el.parentElement;
+          const parent = el.closest('pre') || el.parentElement;
           if (!parent) continue;
           
-          const chartText = el.textContent || '';
+          if (el.dataset.mermaidProcessed === 'true') continue;
+          el.dataset.mermaidProcessed = 'true';
+          
+          let chartText = el.textContent || '';
           if (!chartText.trim()) continue;
+          
+          // Decode HTML entities if any exist (e.g. &gt; -> >)
+          const parser = new DOMParser();
+          const decodedDoc = parser.parseFromString(chartText, 'text/html');
+          chartText = decodedDoc.body.textContent || chartText;
           
           const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
           
@@ -102,7 +120,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
         console.error('Mermaid initialization/render error:', err);
         // Show initialization error on the first element as a fallback
         const firstEl = elements[0] as HTMLElement;
-        const parent = firstEl.parentElement;
+        const parent = firstEl.closest('pre') || firstEl.parentElement;
         if (parent) {
           const errDiv = document.createElement('div');
           errDiv.className = 'p-4 my-4 bg-red-950/40 border border-red-500/30 text-red-400 rounded-lg text-xs font-mono';
@@ -112,8 +130,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
       }
     }
 
-    // Run next frame to ensure browser has processed the innerHTML
-    setTimeout(renderMermaid, 0);
+    renderMermaid();
   }, [activeItem.id]);
 
 
