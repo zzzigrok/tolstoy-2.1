@@ -8,7 +8,10 @@ from rich.table import Table
 from contextlib import nullcontext
 from collections import Counter
 
-def setup_logging(name, log_file="tolstoy.log"):
+def setup_logging(name, log_file="data/tolstoy.log"):
+    dirname = os.path.dirname(log_file)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO, 
         format="%(message)s", 

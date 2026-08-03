@@ -1,16 +1,9 @@
+import os
 import re
-import logging
-from rich.logging import RichHandler
+from core.config import Config
+from core.utils import setup_logging
 
-def setup_logger():
-    """Sets up and returns the logger for DataCleaner."""
-    logging.basicConfig(
-        level=logging.INFO, format="%(message)s", datefmt="[%X]",
-        handlers=[RichHandler(rich_tracebacks=True, show_path=False), logging.FileHandler("tolstoy.log", encoding="utf-8")]
-    )
-    return logging.getLogger("DataCleaner")
-
-def clean_data(input_file='raw_text.txt', output_file='input_ru.txt'):
+def clean_data(input_file=None, output_file=None):
     """
     Reads raw text, cleans it of unwanted characters, and saves it.
     
@@ -18,7 +11,12 @@ def clean_data(input_file='raw_text.txt', output_file='input_ru.txt'):
         input_file (str): Path to the input raw text file.
         output_file (str): Path to the output cleaned text file.
     """
-    logger = setup_logger()
+    if input_file is None:
+        input_file = Config.raw_path
+    if output_file is None:
+        output_file = Config.input_path
+
+    logger = setup_logging("DataCleaner", Config.log_path)
     
     # --- 1.1 Графическое изображение ---
     RESET  = "\033[0m"
@@ -43,14 +41,18 @@ def clean_data(input_file='raw_text.txt', output_file='input_ru.txt'):
         logger.error(f"ОШИБКА: Файл '{input_file}' не найден! Положите ваши тексты в этот файл.")
         return
 
-    # ИСПРАВЛЕННЫЙ ШАБЛОН:
-    allowed_chars = re.compile(r'[^а-яА-ЯёЁa-zA-Z0-9\s.,!?;:()\[\]"\'—–-]')
+    # ИСПРАВЛЕННЫЙ ШАБЛОН (включая русские кавычки «»):
+    allowed_chars = re.compile(r'[^а-яА-ЯёЁa-zA-Z0-9\s.,!?;:()\[\]"\'«»—–-]')
 
     logger.info("Очищаем от мусорных символов (эмодзи, иероглифы и т.д.)...")
     clean_text = allowed_chars.sub('', text)
 
     # Убираем множественные пустые строки (сжимаем текст)
     clean_text = re.sub(r'\n\s*\n', '\n\n', clean_text)
+
+    out_dir = os.path.dirname(output_file)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
 
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(clean_text)
@@ -63,3 +65,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

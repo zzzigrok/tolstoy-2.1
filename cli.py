@@ -17,13 +17,14 @@ from engine.diagnostics import (model_analysis, performance_bench, hardware_diag
                          data_stats_view, config_view, generation_quality_test)
 
 # Инициализация глобального логгера для менеджера
+Config.ensure_dirs()
 logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
     handlers=[
         RichHandler(rich_tracebacks=True, show_path=False),
-        logging.FileHandler("tolstoy.log", encoding="utf-8")
+        logging.FileHandler(Config.log_path, encoding="utf-8")
     ]
 )
 logger = logging.getLogger("Manager")
@@ -73,10 +74,10 @@ def draw_header():
 def check_files():
     """Проверяет наличие необходимых файлов для отображения статуса."""
     status = {
-        "raw_text": os.path.exists("raw_text.txt"),
-        "input_ru": os.path.exists("input_ru.txt"),
-        "vocab": os.path.exists("vocab.pkl"),
-        "weights": os.path.exists("model_weights.pth")
+        "raw_text": os.path.exists(Config.raw_path),
+        "input_ru": os.path.exists(Config.input_path),
+        "vocab": os.path.exists(Config.vocab_path),
+        "weights": os.path.exists(Config.weights_path)
     }
     return status
 
@@ -90,7 +91,7 @@ def draw_menu(status):
     # Формируем статусы для каждого шага
     step1_status = "[bold green]✔ Выбран[/]" if status["raw_text"] else "[bold red]✖ Не выбран[/]"
     step2_status = "[bold green]✔ Готово[/]" if status["input_ru"] else ("[bold red]✖ Нужен датасет[/]" if not status["raw_text"] else "[bold yellow]⏳ Ожидает очистки[/]")
-    step3_status = "[bold green]✔ Обучено[/]" if status["weights"] else ("[bold red]✖ Нужен input_ru.txt[/]" if not status["input_ru"] else "[bold yellow]⏳ Готов к обучению[/]")
+    step3_status = "[bold green]✔ Обучено[/]" if status["weights"] else ("[bold red]✖ Нужен очищенный датасет[/]" if not status["input_ru"] else "[bold yellow]⏳ Готов к обучению[/]")
     step4_status = "[bold green]✔ Готов к работе[/]" if status["weights"] and status["vocab"] else "[bold red]✖ Нужны веса модели[/]"
 
     table.add_row("[1]", "📂 Выбрать датасет (.txt)", step1_status)
@@ -112,7 +113,13 @@ def select_dataset():
     console.print("")
 
     # Исключаем системные и уже обработанные файлы
-    exclude_files = ['input_ru.txt', 'raw_text.txt', 'chat_history.txt', 'tolstoy.log', 'requirements.txt', 'config.py', 'model.py', 'utils.py']
+    exclude_files = [
+        os.path.basename(Config.input_path),
+        os.path.basename(Config.raw_path),
+        os.path.basename(Config.history_path),
+        os.path.basename(Config.log_path),
+        'requirements.txt', 'config.py', 'model.py', 'utils.py'
+    ]
     txt_files = [f for f in os.listdir('.') if f.endswith('.txt') and f not in exclude_files]
 
     if not txt_files:
@@ -140,7 +147,7 @@ def select_dataset():
             selected_file = txt_files[choice_idx]
             try:
                 # Копируем выбранный файл как raw_text.txt
-                shutil.copy(selected_file, "raw_text.txt")
+                shutil.copy(selected_file, Config.raw_path)
                 logger.info(f"Файл [bold green]{selected_file}[/] успешно выбран и назначен как основной датасет.")
             except Exception as e:
                 logger.error(f"Ошибка при копировании файла: {e}")

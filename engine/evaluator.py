@@ -220,6 +220,6 @@ def evaluate_generation_quality(model, device, encode_fn, decode_fn, ctx, prompt
         })
         
     return {
-        'average_score': total_score / len(prompts),
+        'average_score': total_score / len(prompts) if prompts else 0.0,
         'details': results
     }

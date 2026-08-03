@@ -34,6 +34,7 @@ def train():
     stoi = { ch:i for i,ch in enumerate(chars) }
     itos = { i:ch for i,ch in enumerate(chars) }
 
+    Config.ensure_dirs()
     with open(Config.vocab_path, 'wb') as f:
         pickle.dump({'stoi': stoi, 'itos': itos, 'vocab_size': vocab_size}, f)
     logger.info(f"Словарь сохранен. Уникальных символов: {vocab_size}")
