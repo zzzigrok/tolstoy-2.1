@@ -403,6 +403,12 @@ def generation_quality_test():
             Prompt.ask("\nНажмите Enter для возврата")
             return
 
+    if not os.path.exists(Config.vocab_path):
+        logger.error(f"Словарь {Config.vocab_path} не найден!")
+        console.print(f"[bold red]ОШИБКА:[/] Файл словаря '{Config.vocab_path}' не найден. Сначала обучите модель.")
+        Prompt.ask("\nНажмите Enter для возврата")
+        return
+
     with open(Config.vocab_path, 'rb') as f:
         vocab_data = pickle.load(f)
     stoi = vocab_data['stoi']

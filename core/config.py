@@ -39,4 +39,7 @@ class Config:
 
     @classmethod
     def to_dict(cls):
-        return {k: v for k, v in cls.__dict__.items() if not k.startswith('__') and not callable(v)}
+        return {
+            k: v for k, v in cls.__dict__.items() 
+            if not k.startswith('__') and not callable(v) and not isinstance(v, (classmethod, staticmethod))
+        }

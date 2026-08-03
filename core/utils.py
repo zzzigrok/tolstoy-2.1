@@ -1,8 +1,17 @@
 import torch
 import os
+import sys
 import logging
 import pickle
 import time
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from rich.logging import RichHandler
 from rich.table import Table
 from contextlib import nullcontext
