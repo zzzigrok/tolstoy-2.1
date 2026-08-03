@@ -1,8 +1,17 @@
 import os
+import sys
 import pickle
 import torch
 import random
 import logging
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from rich.console import Console, Group
 from rich.panel import Panel
 from rich.table import Table

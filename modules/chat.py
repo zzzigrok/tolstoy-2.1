@@ -1,8 +1,15 @@
+import os
+import sys
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import torch
 import torch.nn as nn
 import pickle
-import os
-import sys
 import datetime
 import time
 from rich.console import Console
