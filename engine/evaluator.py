@@ -84,16 +84,22 @@ class HeuristicSyntaxEngine:
         return word.lower() in self.praed_list
 
     def is_adj(self, word):
-        return bool(re.search(self.adj_endings, word.lower()))
+        w = word.lower()
+        if w in self.pronouns or w in self.noun_exceptions or w in self.prepositions or w in self.conjunctions or w in self.praed_list:
+            return False
+        if len(w) < 4:
+            return False
+        return bool(re.search(self.adj_endings, w))
 
     def is_n1(self, word):
-        """Улучшенная эвристика для поиска потенциального подлежащего."""
+        """Улучшенная эвристика для поиска потенциального подлежащего (N1)."""
         w = word.lower()
-        if len(w) < 2 and w not in {"я", "и"}: return False
-        if w in self.conjunctions or w in self.praed_list: return False
-        if self.is_verb(w) or self.is_inf(w) or self.is_adj(w): return False
-        # Исключаем распространенные предлоги
-        if w in {"в", "на", "с", "у", "к", "по", "из", "за", "от", "до", "об", "при", "про"}: return False
+        if len(w) < 2 and w not in {"я"}:
+            return False
+        if w in self.conjunctions or w in self.praed_list or w in self.prepositions:
+            return False
+        if self.is_verb(w) or self.is_inf(w) or self.is_adj(w):
+            return False
         return True
 
     def get_complexity_metrics(self, text):
