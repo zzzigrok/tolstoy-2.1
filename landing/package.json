@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/compileDocs.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d ../docs"
+    "deploy": "gh-pages -d ../docs",
+    "predev": "node scripts/compileDocs.js"
   },
   "dependencies": {
     "katex": "^0.17.0",

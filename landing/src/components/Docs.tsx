@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, Search, ChevronRight, ChevronDown, Menu, X, Clock } from 'lucide-react';
 import { docsData } from '../docsData';
 import type { DocItem } from '../docsData';
 import 'katex/dist/katex.min.css';
-import { createRoot } from 'react-dom/client';
-import { Mermaid } from './Mermaid';
 
 interface DocsProps {
   setCurrentPage: (page: 'home' | 'docs') => void;
@@ -31,21 +29,6 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const mermaidRootsRef = useRef<any[]>([]);
-
-  // Cleanup Mermaid roots when navigation changes to prevent memory leaks and duplicate rendering
-  useEffect(() => {
-    return () => {
-      mermaidRootsRef.current.forEach(root => {
-        try {
-          root.unmount();
-        } catch (e) {
-          // ignore
-        }
-      });
-      mermaidRootsRef.current = [];
-    };
-  }, [activeItem.id]);
 
   // Keyboard shortcut handler (pressing '/' focuses the search input)
   useEffect(() => {
@@ -70,100 +53,46 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Callback ref to render Mermaid diagrams reliably when the container mounts
-  const docsContainerRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    const containerNode = node;
-    
-    // Setup window level log function
-    (window as any).logMermaidDebug = (msg: string) => {
-      console.log('[MermaidDebug]', msg);
-      const debugEl = document.getElementById('mermaid-debug-panel');
-      if (debugEl) {
-        const logLine = document.createElement('div');
-        logLine.className = 'border-b border-white/5 py-0.5';
-        logLine.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
-        debugEl.appendChild(logLine);
-      }
+  // Fallback dynamic rendering for any un-compiled Mermaid blocks
+  useEffect(() => {
+    let isMounted = true;
+    const rawBlocks = document.querySelectorAll<HTMLElement>('.prose-docs pre.mermaid:not([data-processed="true"])');
+    if (rawBlocks.length === 0) return;
+
+    import('mermaid').then(({ default: m }) => {
+      if (!isMounted) return;
+      m.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        securityLevel: 'loose',
+        themeVariables: {
+          fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+          background: 'transparent',
+          primaryColor: '#1e293b',
+          primaryTextColor: '#f8fafc',
+          primaryBorderColor: 'rgba(255, 255, 255, 0.15)',
+          lineColor: '#60a5fa',
+          arrowheadColor: '#60a5fa',
+          edgeLabelBackground: '#0f172a',
+          secondaryColor: '#0f172a',
+          secondaryTextColor: '#cbd5e1',
+          secondaryBorderColor: 'rgba(255, 255, 255, 0.1)',
+        },
+      });
+      m.run({ nodes: Array.from(rawBlocks), suppressErrors: true });
+    }).catch(console.error);
+
+    return () => {
+      isMounted = false;
     };
-
-    (window as any).logMermaidDebug('docsContainerRef callback triggered');
-
-    async function renderMermaid() {
-      (window as any).logMermaidDebug('renderMermaid() started');
-      let elements = containerNode.querySelectorAll('.language-mermaid');
-      let retries = 0;
-      const maxRetries = 15;
-      
-      (window as any).logMermaidDebug(`Initial query returned ${elements.length} elements`);
-      
-      // If no elements found, wait and retry (handles timing/race conditions in React mounting)
-      while (elements.length === 0 && retries < maxRetries) {
-        (window as any).logMermaidDebug(`Retry ${retries + 1}: no elements found, waiting...`);
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        elements = containerNode.querySelectorAll('.language-mermaid');
-        retries++;
-      }
-      
-      (window as any).logMermaidDebug(`Final query returned ${elements.length} elements`);
-      
-      if (elements.length === 0) return;
-      
-      for (let i = 0; i < elements.length; i++) {
-        const el = elements[i] as HTMLElement;
-        const parent = el.closest('pre') || el.parentElement;
-        if (!parent) {
-          (window as any).logMermaidDebug(`Element ${i}: no parent found`);
-          continue;
-        }
-        
-        if (el.dataset.mermaidProcessed === 'true') {
-          (window as any).logMermaidDebug(`Element ${i}: already processed`);
-          continue;
-        }
-        el.dataset.mermaidProcessed = 'true';
-        
-        let chartText = el.textContent || '';
-        if (!chartText.trim()) {
-          (window as any).logMermaidDebug(`Element ${i}: chart text is empty`);
-          continue;
-        }
-        
-        (window as any).logMermaidDebug(`Element ${i}: chart text length: ${chartText.length}`);
-        
-        // Decode HTML entities if any exist (e.g. &gt; -> >)
-        const parser = new DOMParser();
-        const decodedDoc = parser.parseFromString(chartText, 'text/html');
-        chartText = decodedDoc.body.textContent || chartText;
-        
-        // Create mount point
-        const mountPoint = document.createElement('div');
-        parent.replaceWith(mountPoint);
-        
-        try {
-          (window as any).logMermaidDebug(`Element ${i}: creating root`);
-          const root = createRoot(mountPoint);
-          (window as any).logMermaidDebug(`Element ${i}: rendering component`);
-          root.render(<Mermaid chart={chartText} />);
-          mermaidRootsRef.current.push(root);
-          (window as any).logMermaidDebug(`Element ${i}: root created successfully`);
-        } catch (e: any) {
-          (window as any).logMermaidDebug(`Element ${i} error: ${e?.message || e}`);
-          console.error('Failed to create root or render Mermaid component', e);
-        }
-      }
-    }
-
-    renderMermaid();
   }, [activeItem.id]);
-
 
   // Intersection Observer for headings
   useEffect(() => {
     const observerOptions = {
       root: null,
       rootMargin: '-100px 0px -70% 0px',
-      threshold: 0
+      threshold: 0,
     };
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
@@ -182,7 +111,6 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     };
   }, [activeItem.id]);
 
-  // Return the compiled HTML directly since Mermaid will be dynamically swapped in the useEffect hook
   const preparedHtml = useMemo(() => {
     return activeItem.html;
   }, [activeItem.html]);
@@ -193,7 +121,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
       cat.items.map(item => ({
         ...item,
         categoryTitle: cat.title,
-        categorySlug: cat.slug
+        categorySlug: cat.slug,
       }))
     );
   }, []);
@@ -216,7 +144,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
   const toggleCategory = (slug: string) => {
     setExpandedCategories(prev => ({
       ...prev,
-      [slug]: !prev[slug]
+      [slug]: !prev[slug],
     }));
   };
 
@@ -224,7 +152,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
     setActiveItem(item);
     setExpandedCategories(prev => ({
       ...prev,
-      [categorySlug]: true
+      [categorySlug]: true,
     }));
     setIsSearchOpen(false);
     setSearchQuery('');
@@ -249,7 +177,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
       {/* Back Button */}
       <button
         onClick={() => setCurrentPage('home')}
-        className="flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-cyan-400 transition-colors group text-left self-start"
+        className="flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-cyan-400 transition-colors group text-left self-start cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
         <span>Вернуться на главную</span>
@@ -329,7 +257,7 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
                       <button
                         key={item.id}
                         onClick={() => selectItem(item, category.slug)}
-                        className={`w-full text-left py-1.5 px-3 text-sm rounded-lg transition-all block ${
+                        className={`w-full text-left py-1.5 px-3 text-sm rounded-lg transition-all block cursor-pointer ${
                           isActive
                             ? 'text-cyan-400 font-bold bg-cyan-950/20 border-l-2 border-cyan-400 -ml-[13px] pl-[11px]'
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
@@ -399,17 +327,10 @@ export const Docs: React.FC<DocsProps> = ({ setCurrentPage }) => {
             </div>
           </div>
 
-          {/* Debug panel */}
-          <div className="p-4 my-4 bg-slate-950/60 border border-amber-500/30 text-amber-400 rounded-xl text-xs font-mono max-h-48 overflow-y-auto">
-            <strong>Mermaid Debug Panel:</strong>
-            <div id="mermaid-debug-panel" className="mt-2 space-y-1"></div>
-          </div>
-
           {/* Main Text Pane */}
           <article className="min-h-[500px]">
             <div
               key={activeItem.id}
-              ref={docsContainerRef}
               className="prose-docs"
               dangerouslySetInnerHTML={{ __html: preparedHtml }}
             />

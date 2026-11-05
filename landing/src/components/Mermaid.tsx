@@ -9,28 +9,28 @@ mermaid.initialize({
   themeVariables: {
     fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
     background: 'transparent',
-    
+
     // Node colors
     primaryColor: '#1e293b', // slate-800
     primaryTextColor: '#f8fafc', // slate-50
     primaryBorderColor: 'rgba(255, 255, 255, 0.15)',
-    
+
     // Line colors
     lineColor: '#60a5fa', // blue-400
     arrowheadColor: '#60a5fa',
-    
+
     // Label backgrounds
     edgeLabelBackground: '#0f172a', // slate-900
-    
+
     // Secondary/Tertiary (for alternative node styles)
     secondaryColor: '#0f172a',
     secondaryTextColor: '#cbd5e1',
     secondaryBorderColor: 'rgba(255, 255, 255, 0.1)',
-    
+
     tertiaryColor: '#1e1b4b', // indigo-950
     tertiaryTextColor: '#e0e7ff', // indigo-100
     tertiaryBorderColor: 'rgba(129, 140, 248, 0.3)',
-    
+
     // Note colors
     noteBkgColor: '#1e293b',
     noteTextColor: '#f8fafc',
@@ -57,52 +57,36 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
     let isMounted = true;
     const cleanChart = chart.trim();
 
-    if (typeof (window as any).logMermaidDebug === 'function') {
-      (window as any).logMermaidDebug(`Mermaid Component useEffect triggered for chart length: ${cleanChart.length}`);
-    }
-
     const renderChart = async () => {
       try {
         setError(null);
-        
+
         // Generate a new ID each time to avoid cache or collision issues
         const uniqueId = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
         elementIdRef.current = uniqueId;
 
-        if (typeof (window as any).logMermaidDebug === 'function') {
-          (window as any).logMermaidDebug(`Mermaid.render starting with id ${uniqueId}`);
-        }
-
         // Render diagram
         const { svg: renderedSvg } = await mermaid.render(uniqueId, cleanChart);
-        
-        if (typeof (window as any).logMermaidDebug === 'function') {
-          (window as any).logMermaidDebug(`Mermaid.render success. SVG length: ${renderedSvg.length}`);
-        }
 
         if (isMounted) {
           // Wrap the SVG in a responsive wrapper and remove inline style overrides that restrict sizing
           let processedSvg = renderedSvg;
-          
-          // Sometimes mermaid puts styling like max-width on the svg. Let's make it fully responsive
+
+          // Make svg fully responsive
           processedSvg = processedSvg.replace(/max-width:\s*\d+px;/g, 'max-width: 100%;');
-          
+
           setSvg(processedSvg);
         }
       } catch (err: unknown) {
         console.error('Mermaid rendering error:', err);
         const errorMessage = err instanceof Error ? err.message : String(err);
-        
-        if (typeof (window as any).logMermaidDebug === 'function') {
-          (window as any).logMermaidDebug(`Mermaid.render threw error: ${errorMessage}`);
-        }
 
         // Catch dynamic module loading failures (due to new build deploying and changing chunk hashes)
-        const isDynamicImportError = 
+        const isDynamicImportError =
           /failed\s+to\s+fetch\s+dynamically\s+imported\s+module/i.test(errorMessage) ||
           /importing\s+a\s+module\s+script\s+failed/i.test(errorMessage) ||
           /error\s+loading\s+dynamically\s+imported\s+module/i.test(errorMessage);
-        
+
         if (isDynamicImportError) {
           console.warn('Dynamic import error detected in Mermaid renderer. Reloading page...');
           window.location.reload();
@@ -112,7 +96,7 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
         if (isMounted) {
           setError(errorMessage || 'Ошибка парсинга или рендеринга схемы');
         }
-        
+
         // Clean up mermaid inner state if rendering fails, to prevent blocking subsequent renders
         const badElement = document.getElementById(elementIdRef.current);
         if (badElement) {
@@ -152,10 +136,10 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
 
   return (
     <div className="my-8 flex justify-center w-full">
-      <div 
+      <div
         className="mermaid-container w-full max-w-full overflow-x-auto p-6 md:p-8 rounded-2xl border border-white/10 bg-slate-900/30 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_12px_45px_rgba(59,130,246,0.1)] flex justify-center items-center"
-        dangerouslySetInnerHTML={{ 
-          __html: svg || '<div class="text-slate-400 text-sm font-semibold flex items-center gap-2 py-4"><span class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>Построение схемы...</div>' 
+        dangerouslySetInnerHTML={{
+          __html: svg || '<div class="text-slate-400 text-sm font-semibold flex items-center gap-2 py-4"><span class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>Построение схемы...</div>',
         }}
       />
     </div>
